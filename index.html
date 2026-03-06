@@ -272,16 +272,16 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
       <div class="cbanner">
         <div class="cbs"><div class="cbn" id="cbSel">0</div><div class="cbl">In List</div></div>
         <div class="cbd"></div>
-        <div class="cbs"><div class="cbn" id="cbAvail">14</div><div class="cbl">Available</div></div>
+        <div class="cbs"><div class="cbn" id="cbAvail">30</div><div class="cbl">Available</div></div>
         <div class="cbd"></div>
-        <div class="cbs"><div class="cbn" id="cbGrps">0</div><div class="cbl">Groups</div></div>
+        <div class="cbs"><div class="cbn" id="cbGrps">7</div><div class="cbl">Groups</div></div>
         <div class="cbd"></div>
         <div class="cbprog">
           <div class="cbplbl" id="cbLbl">Tick rows in the pool to build the prayer list</div>
           <div class="progress" style="height:9px;background:rgba(255,255,255,.25);">
             <div class="progress-bar" id="cbBar" style="width:0%;background:#fff;opacity:.88;"></div>
           </div>
-          <div class="cbcov" id="cbCov">0 of 14 approved requests added to prayer list</div>
+          <div class="cbcov" id="cbCov">0 of 30 approved requests added to prayer list</div>
         </div>
       </div>
 
@@ -361,7 +361,7 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
                     <th style="width:34px;"><input type="checkbox" id="chkAll" onchange="masterTick(this)" title="Select/deselect all"></th>
                     <th>Prayer PPCode</th>
                     <th>Member PPCode</th>
-                    <th>Prayer Topic</th>
+                    <th>Prayer Topic &amp; Details</th>
                     <th>Submitted</th>
                   </tr>
                 </thead>
@@ -398,8 +398,7 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
               </button>
             </div>
             <div class="hint mb-3">
-              Requests appear here automatically when ticked above. Untick or click x to remove instantly.
-              Use "Add to Prayer List" to tag them with a group before starting the session.
+    
             </div>
             <div class="pl-wrap" id="plWrap">
               <div class="pl-empty" id="plEmpty">
@@ -545,22 +544,59 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
 <script>
 'use strict';
 var POOL=[
-  {pp:'PR202402100001',mPP:'MB20240012',member:'Kwame A.',  topic:'Job Opportunity',    date:'2026-02-10'},
-  {pp:'PR202402110002',mPP:'MB20240034',member:'Ama B.',    topic:'Job Opportunity',    date:'2026-02-11'},
-  {pp:'PR202402120003',mPP:'MB20240056',member:'Kofi M.',   topic:'Marriage',           date:'2026-02-12'},
-  {pp:'PR202402130004',mPP:'MB20240078',member:'Esi D.',    topic:'Marriage',           date:'2026-02-13'},
-  {pp:'PR202402140005',mPP:'MB20240090',member:'Abena K.',  topic:'Travel Opportunity', date:'2026-02-14'},
-  {pp:'PR202402150006',mPP:'MB20240101',member:'Yaw O.',    topic:'School Admission',   date:'2026-02-15'},
-  {pp:'PR202402160007',mPP:'MB20240113',member:'Akosua F.', topic:'Healing',            date:'2026-02-16'},
-  {pp:'PR202402170008',mPP:'MB20240125',member:'Nana T.',   topic:'Job Opportunity',    date:'2026-02-17'},
-  {pp:'PR202402180009',mPP:'MB20240137',member:'Fiifi S.',  topic:'Marriage',           date:'2026-02-18'},
-  {pp:'PR202402190010',mPP:'MB20240149',member:'Adwoa P.',  topic:'School Admission',   date:'2026-02-19'},
-  {pp:'PR202402200011',mPP:'MB20240161',member:'Kwesi B.',  topic:'Healing',            date:'2026-02-20'},
-  {pp:'PR202402210012',mPP:'MB20240173',member:'Afia O.',   topic:'Finances',           date:'2026-02-21'},
-  {pp:'PR202402220013',mPP:'MB20240185',member:'Yao K.',    topic:'Job Opportunity',    date:'2026-02-22'},
-  {pp:'PR202402230014',mPP:'MB20240197',member:'Mansa D.',  topic:'Marriage',           date:'2026-02-23'},
+  /* ── Job Opportunity (5) ── */
+  {pp:'PR202402100001',mPP:'MB20240012',member:'Kwame Asante',    topic:'Job Opportunity',      date:'2026-02-10', details:'Seeking a breakthrough in securing a permanent government position after 3 years of contract work.'},
+  {pp:'PR202402110002',mPP:'MB20240034',member:'Ama Boateng',     topic:'Job Opportunity',      date:'2026-02-11', details:'Recently laid off from her banking job. Praying for a new position before month end.'},
+  {pp:'PR202402170008',mPP:'MB20240125',member:'Nana Tawiah',     topic:'Job Opportunity',      date:'2026-02-17', details:'Graduate of KNUST engineering program, has been job-hunting for 8 months. Needs divine intervention.'},
+  {pp:'PR202402220013',mPP:'MB20240185',member:'Yao Kumi',        topic:'Job Opportunity',      date:'2026-02-22', details:'Praying for a promotion to senior manager after being passed over twice this year.'},
+  {pp:'PR202403010015',mPP:'MB20240209',member:'Serwaa Frimpong', topic:'Job Opportunity',      date:'2026-03-01', details:'Applying for a USAID programme position. Final interview scheduled next week. Trusting God.'},
+
+  /* ── Marriage / Relationship (5) ── */
+  {pp:'PR202402120003',mPP:'MB20240056',member:'Kofi Mensah',     topic:'Marriage',             date:'2026-02-12', details:'Praying for God to reveal the right life partner. Has been believing for 5 years.'},
+  {pp:'PR202402130004',mPP:'MB20240078',member:'Esi Darko',       topic:'Marriage',             date:'2026-02-13', details:'Engaged but facing strong family opposition. Requesting prayer for peace and unity.'},
+  {pp:'PR202402180009',mPP:'MB20240137',member:'Fiifi Sarpong',   topic:'Marriage',             date:'2026-02-18', details:'Marriage under severe strain. Praying for healing and restoration of his home.'},
+  {pp:'PR202402230014',mPP:'MB20240197',member:'Mansa Dankwah',   topic:'Marriage',             date:'2026-02-23', details:'Believes God has shown her a life partner but the relationship has stalled. Seeking clarity.'},
+  {pp:'PR202403020016',mPP:'MB20240221',member:'Adjoa Ofori',     topic:'Marriage',             date:'2026-03-02', details:'Recently widowed. Praying for peace, direction, and when the time is right, a new companion.'},
+
+  /* ── Healing / Health (5) ── */
+  {pp:'PR202402160007',mPP:'MB20240113',member:'Akosua Fofie',    topic:'Healing',              date:'2026-02-16', details:'Diagnosed with Type 2 diabetes last month. Trusting God for complete healing and strength.'},
+  {pp:'PR202402200011',mPP:'MB20240161',member:'Kwesi Bimpong',   topic:'Healing',              date:'2026-02-20', details:'Father admitted to Korle Bu with kidney complications. Family requesting urgent prayer.'},
+  {pp:'PR202403030017',mPP:'MB20240233',member:'Efua Amoah',      topic:'Healing',              date:'2026-03-03', details:'Struggling with severe depression for 18 months. Believes God is her healer and deliverer.'},
+  {pp:'PR202403040018',mPP:'MB20240245',member:'Kofi Adu-Boahen', topic:'Healing',              date:'2026-03-04', details:'Post-surgery recovery after a road accident. Doctors say 6 more months of rehabilitation.'},
+  {pp:'PR202403050019',mPP:'MB20240257',member:'Abena Asiedua',   topic:'Healing',              date:'2026-03-05', details:'Child born with a congenital heart condition. Parents praying for miraculous healing.'},
+
+  /* ── School Admission / Education (5) ── */
+  {pp:'PR202402150006',mPP:'MB20240101',member:'Yaw Owusu',       topic:'School Admission',     date:'2026-02-15', details:'Waiting for admission into UG Medical School. Applied three times. Trusting God this season.'},
+  {pp:'PR202402190010',mPP:'MB20240149',member:'Adwoa Poku',      topic:'School Admission',     date:'2026-02-19', details:'Daughter hoping to gain entry into PRESEC for WASSCE. Parents fasting and praying.'},
+  {pp:'PR202403010020',mPP:'MB20240269',member:'Kwadwo Asare',    topic:'School Admission',     date:'2026-03-01', details:'Scholarship application to a UK university pending. Visa interview scheduled for next month.'},
+  {pp:'PR202403020021',mPP:'MB20240281',member:'Maame Osei',      topic:'School Admission',     date:'2026-03-02', details:'Waiting for WAEC results. Has been praying for excellent grades to secure a nursing place.'},
+  {pp:'PR202403040022',mPP:'MB20240293',member:'Opoku Acheampong',topic:'School Admission',     date:'2026-03-04', details:'Son applying for technical vocational training. Family cannot afford fees if not admitted on scholarship.'},
+
+  /* ── Travel Opportunity (3) ── */
+  {pp:'PR202402140005',mPP:'MB20240090',member:'Abena Kyei',      topic:'Travel Opportunity',   date:'2026-02-14', details:'US visa application has been denied twice. Trusting God for a miracle at the next interview.'},
+  {pp:'PR202403010023',mPP:'MB20240305',member:'Nana Ama Asante', topic:'Travel Opportunity',   date:'2026-03-01', details:'Scholarship approved but Schengen visa pending. Embassy appointment booked for March 20.'},
+  {pp:'PR202403050024',mPP:'MB20240317',member:'Kofi Annan Jnr.', topic:'Travel Opportunity',   date:'2026-03-05', details:'Invited for a medical mission trip to Liberia. Praying for smooth travel, safety, and impact.'},
+
+  /* ── Finances / Business (4) ── */
+  {pp:'PR202402210012',mPP:'MB20240173',member:'Afia Osei',       topic:'Finances',             date:'2026-02-21', details:'Small trading business has been running at a loss for 6 months. Praying for a turnaround.'},
+  {pp:'PR202403020025',mPP:'MB20240329',member:'Yaw Darko',       topic:'Finances',             date:'2026-03-02', details:'Struggling to pay children\'s school fees. Praying for unexpected financial breakthrough.'},
+  {pp:'PR202403030026',mPP:'MB20240341',member:'Akua Mensah',     topic:'Finances',             date:'2026-03-03', details:'Applying for a GCB business loan. Documentation complete. Waiting on approval.'},
+  {pp:'PR202403040027',mPP:'MB20240353',member:'Badu Opoku',      topic:'Finances',             date:'2026-03-04', details:'Owes GHS 12,000 to a supplier and cannot meet the deadline. Praying for God\'s provision.'},
+
+  /* ── Family / Protection (3) ── */
+  {pp:'PR202403010028',mPP:'MB20240365',member:'Ama Serwaa',      topic:'Family Protection',    date:'2026-03-01', details:'Son involved in wrong company at university. Mother praying for divine intervention and restoration.'},
+  {pp:'PR202403030029',mPP:'MB20240377',member:'Kweku Barimah',   topic:'Family Protection',    date:'2026-03-03', details:'Sister living abroad has not been in contact for 3 weeks. Family requesting prayer for safety.'},
+  {pp:'PR202403050030',mPP:'MB20240389',member:'Adwoa Nimako',    topic:'Family Protection',    date:'2026-03-05', details:'Husband travels frequently for work. Wife praying for travel mercies and household protection.'},
 ];
-var MEMBERS={'MB20240001':{name:'Elder Mensah',role:'Elder',ini:'EM'},'MB20240002':{name:'Pastor Amo',role:'Pastor',ini:'PA'},'MB20240003':{name:'Deacon Boateng',role:'Deacon',ini:'DB'},'MB20240004':{name:'Sis. Akua',role:'Member',ini:'SA'}};
+var MEMBERS={
+  'MB20240001':{name:'Elder Mensah',    role:'Elder',   ini:'EM'},
+  'MB20240002':{name:'Pastor Amo',      role:'Pastor',  ini:'PA'},
+  'MB20240003':{name:'Deacon Boateng',  role:'Deacon',  ini:'DB'},
+  'MB20240004':{name:'Sis. Akua',       role:'Member',  ini:'SA'},
+  'MB20240005':{name:'Elder Owusu',     role:'Elder',   ini:'EO'},
+  'MB20240006':{name:'Deacon Frimpong', role:'Deacon',  ini:'DF'},
+  'MB20240007':{name:'Bro. Kojo Asante',role:'Member',  ini:'KA'},
+};
 var prayerList=[],groups=[],leaderPP='',leaderData=null,prayedLive=160,totalLive=200,doneLiveGrps=2;
 var $ngM,$lM;
 document.addEventListener('DOMContentLoaded',function(){
@@ -573,10 +609,13 @@ document.addEventListener('DOMContentLoaded',function(){
   window.addEventListener('resize',function(){if(window.innerWidth>=992)closeSB();});
   document.addEventListener('keydown',function(e){if(e.key==='Escape')closeSB();});
   groups=[
-    {name:'Job Opportunities',icon:'bi-briefcase',desc:'',items:[]},
-    {name:'Travel Opportunities',icon:'bi-airplane',desc:'',items:[]},
-    {name:'Marriage',icon:'bi-hearts',desc:'',items:[]},
-    {name:'Education / Schools',icon:'bi-mortarboard',desc:'',items:[]},
+    {name:'Job Opportunities',   icon:'bi-briefcase',      desc:'',items:[]},
+    {name:'Marriage',            icon:'bi-hearts',         desc:'',items:[]},
+    {name:'Healing',             icon:'bi-activity',       desc:'',items:[]},
+    {name:'Education / Schools', icon:'bi-mortarboard',    desc:'',items:[]},
+    {name:'Travel Opportunities',icon:'bi-airplane',       desc:'',items:[]},
+    {name:'Finances / Business', icon:'bi-cash-coin',      desc:'',items:[]},
+    {name:'Family Protection',   icon:'bi-people',         desc:'',items:[]},
   ];
   renderPool();renderGroupSel();refreshCounts();
 });
@@ -594,18 +633,33 @@ function renderPool(){
     if(q&&!r.pp.toLowerCase().includes(q)&&!r.topic.toLowerCase().includes(q)&&!r.mPP.toLowerCase().includes(q)&&!r.member.toLowerCase().includes(q))return;
     shown++;
     var chk=prayerList.includes(r.pp);
+    /* topic colour */
+    var tColor={
+      'Job Opportunity':'#dbeafe;color:#1d4ed8',
+      'Marriage':'#fce7f3;color:#be185d',
+      'Healing':'#dcfce7;color:#15803d',
+      'School Admission':'#fef9c3;color:#a16207',
+      'Travel Opportunity':'#e0f2fe;color:#0369a1',
+      'Finances':'#f3e8ff;color:#7c3aed',
+      'Family Protection':'#fff7ed;color:#c2410c',
+    }[r.topic]||'#f1f5f9;color:#475569';
     html+='<tr class="pool-row'+(chk?' sel':'')+'" id="pr-'+r.pp+'">'
       +'<td style="text-align:center;"><input type="checkbox" class="pchk" data-pp="'+r.pp+'"'+(chk?' checked':'')
       +' onchange="onChk(this)"></td>'
       +'<td><span style="font-family:monospace;font-size:.77rem;">'+r.pp+'</span></td>'
       +'<td><span style="font-family:monospace;font-size:.77rem;font-weight:600;">'+r.mPP+'</span>'
       +'<br><span style="font-size:.73rem;color:var(--muted);">'+r.member+'</span></td>'
-      +'<td style="font-weight:600;">'+r.topic+'</td>'
+      +'<td>'
+      +  '<span class="badge" style="background:'+tColor+';margin-bottom:3px;display:inline-block;">'+r.topic+'</span>'
+      +  (r.details?'<br><span style="font-size:.72rem;color:var(--muted);" title="'+r.details.replace(/"/g,"&quot;")+'" data-bs-toggle="tooltip">'+r.details.substring(0,48)+(r.details.length>48?'…':'')+'</span>':'')
+      +'</td>'
       +'<td><small>'+r.date+'</small></td>'
       +'</tr>';
   });
   if(!shown)html='<tr><td colspan="5" class="text-center py-3" style="color:var(--muted);"><i class="bi bi-search me-1"></i>No results.</td></tr>';
   body.innerHTML=html;
+  /* re-init tooltips on newly rendered rows */
+  body.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function(el){new bootstrap.Tooltip(el,{trigger:'hover'});});
   syncMaster();
 }
 function onChk(chk){
