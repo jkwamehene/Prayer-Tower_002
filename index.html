@@ -145,6 +145,25 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
 .lclr{margin-left:auto;background:none;border:1px solid #bae6fd;border-radius:4px;color:#0369a1;font-size:.75rem;padding:2px 8px;cursor:pointer;transition:background .15s;white-space:nowrap;}
 .lclr:hover{background:#e0f2fe;}
 
+/* PRAYER GROUPS (Builder) */
+.group-card{border:1px solid var(--border);border-radius:var(--r);background:var(--surf);margin-bottom:14px;overflow:hidden;box-shadow:0 2px 10px rgba(1,41,112,.06);transition:box-shadow .2s,border-color .2s;}
+.group-card:hover{box-shadow:var(--shadow-md);}
+.group-card.done{border-color:#b7e4c7;}
+.group-card-header{display:flex;align-items:center;gap:12px;padding:13px 18px;background:var(--bg);border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.group-card-header:hover{background:#eef1fc;}
+.group-card.done .group-card-header{background:var(--success-lt);border-color:#b7e4c7;}
+.group-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;}
+.group-title{font-family:'Nunito',sans-serif;font-weight:700;font-size:.88rem;color:var(--navy);margin:0;}
+.group-meta{font-size:.75rem;color:var(--muted);margin:0;}
+.group-card.done .group-title{color:var(--success);}
+.group-card-body{padding:0;}
+.prayer-item{display:flex;align-items:flex-start;gap:10px;padding:10px 20px;border-bottom:1px solid #f0f3ff;}
+.prayer-item:last-child{border-bottom:none;}
+.pi-code{font-size:.72rem;color:#aaa;white-space:nowrap;min-width:138px;font-family:monospace;}
+.pi-topic{font-weight:600;font-size:.83rem;color:#333;}
+.pi-detail{font-size:.78rem;color:var(--muted);}
+.pi-status{margin-left:auto;flex-shrink:0;}
+
 /* TOAST */
 .toast-el{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--navy);color:#fff;padding:9px 20px;border-radius:20px;font-size:.83rem;font-weight:600;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.2);opacity:0;transition:all .25s;pointer-events:none;}
 .toast-el.show{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -337,22 +356,22 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
           </div></div>
         </div>
 
-        <!-- RIGHT: Pool + Prayer List -->
+        <!-- RIGHT: Pool + Prayer List + Groups -->
         <div class="col-12 col-lg-8">
-          <!-- Pool -->
+
+          <!-- ── Approved Prayer Requests Pool ── -->
           <div class="card"><div class="card-body">
             <div class="ctitle">
               <span class="ctl"><i class="bi bi-database text-primary"></i>Approved Prayer Requests Pool</span>
               <div class="d-flex gap-2 pool-ctl flex-wrap">
-                <input type="text" class="form-control form-control-sm" placeholder="Search PPCode / topic..." style="width:170px;" id="poolQ" oninput="renderPool()">
+                <input type="text" class="form-control form-control-sm" placeholder="Search PPCode / topic / member..." style="width:200px;" id="poolQ" oninput="renderPool()">
                 <button class="btn btn-sm btn-outline-primary" onclick="selectAll()"><i class="bi bi-check2-all me-1"></i>Select All</button>
                 <button class="btn btn-sm btn-outline-secondary" onclick="clearAll()"><i class="bi bi-x-circle me-1"></i>Clear</button>
               </div>
             </div>
             <div class="hint mb-2">
               <i class="bi bi-info-circle me-1 text-primary"></i>
-              <strong>Tick</strong> a row to instantly add it to the Prayer List.
-              <strong>Untick</strong> to remove it. All changes are live.
+              <strong>Tick</strong> a row to instantly add it to the Prayer List. <strong>Untick</strong> to remove it.
             </div>
             <div class="pool-scroll">
               <table class="table table-sm table-hover align-middle mb-0">
@@ -368,12 +387,13 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
                 <tbody id="poolBody"></tbody>
               </table>
             </div>
-            <!-- Add to Prayer List bar -->
+
+            <!-- Group assignment bar -->
             <div class="mt-3 p-3 rounded assign-bar d-flex gap-2 align-items-center flex-wrap" style="background:var(--bg);border:1.5px solid var(--border);">
               <span style="font-family:'Nunito',sans-serif;font-weight:700;font-size:.83rem;color:var(--p);white-space:nowrap;">
                 <i class="bi bi-tag me-1"></i>Assign selected to group:
               </span>
-              <select class="form-select form-select-sm" style="max-width:210px;" id="gSel">
+              <select class="form-select form-select-sm" style="max-width:220px;" id="gSel">
                 <option value="">-- choose group --</option>
               </select>
               <button class="btn btn-sm btn-primary" onclick="assignGroup()">
@@ -385,7 +405,7 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
             </div>
           </div></div>
 
-          <!-- PRAYER LIST -->
+          <!-- ── Prayer List ── -->
           <div class="card"><div class="card-body">
             <div class="ctitle">
               <span class="ctl">
@@ -397,9 +417,6 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
                 <i class="bi bi-x me-1"></i>Clear All
               </button>
             </div>
-            <div class="hint mb-3">
-    
-            </div>
             <div class="pl-wrap" id="plWrap">
               <div class="pl-empty" id="plEmpty">
                 <i class="bi bi-journal-plus"></i>
@@ -408,14 +425,16 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
             </div>
           </div></div>
 
-          <!-- Group Summary -->
-          <div class="card" id="grpSummCard" style="display:none;"><div class="card-body">
-            <div class="ctitle"><span class="ctl"><i class="bi bi-collection text-primary"></i>Groups Summary</span></div>
-            <div id="grpSummBody"></div>
+          <!-- ── Prayer Groups (Builder view) ── -->
+          <div class="card" id="grpBuilderCard" style="display:none;"><div class="card-body">
+            <div class="ctitle"><span class="ctl"><i class="bi bi-collection text-primary"></i>Prayer Groups for This Session</span></div>
+            <div class="hint mb-3">These groups will be covered collectively during the live session. Topics are drawn from member requests.</div>
+            <div id="grpBuilderBody"></div>
           </div></div>
-        </div>
-      </div>
-    </div>
+
+        </div><!-- /col-lg-8 -->
+      </div><!-- /row -->
+    </div><!-- /vBuilder -->
 
     <!-- VIEW: LIVE SESSION -->
     <div id="vLive" style="display:none;">
@@ -543,51 +562,48 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 'use strict';
+
+/* ── DATA ── */
 var POOL=[
-  /* ── Job Opportunity (5) ── */
-  {pp:'PR202402100001',mPP:'MB20240012',member:'Kwame Asante',    topic:'Job Opportunity',      date:'2026-02-10', details:'Seeking a breakthrough in securing a permanent government position after 3 years of contract work.'},
-  {pp:'PR202402110002',mPP:'MB20240034',member:'Ama Boateng',     topic:'Job Opportunity',      date:'2026-02-11', details:'Recently laid off from her banking job. Praying for a new position before month end.'},
-  {pp:'PR202402170008',mPP:'MB20240125',member:'Nana Tawiah',     topic:'Job Opportunity',      date:'2026-02-17', details:'Graduate of KNUST engineering program, has been job-hunting for 8 months. Needs divine intervention.'},
-  {pp:'PR202402220013',mPP:'MB20240185',member:'Yao Kumi',        topic:'Job Opportunity',      date:'2026-02-22', details:'Praying for a promotion to senior manager after being passed over twice this year.'},
-  {pp:'PR202403010015',mPP:'MB20240209',member:'Serwaa Frimpong', topic:'Job Opportunity',      date:'2026-03-01', details:'Applying for a USAID programme position. Final interview scheduled next week. Trusting God.'},
-
-  /* ── Marriage / Relationship (5) ── */
-  {pp:'PR202402120003',mPP:'MB20240056',member:'Kofi Mensah',     topic:'Marriage',             date:'2026-02-12', details:'Praying for God to reveal the right life partner. Has been believing for 5 years.'},
-  {pp:'PR202402130004',mPP:'MB20240078',member:'Esi Darko',       topic:'Marriage',             date:'2026-02-13', details:'Engaged but facing strong family opposition. Requesting prayer for peace and unity.'},
-  {pp:'PR202402180009',mPP:'MB20240137',member:'Fiifi Sarpong',   topic:'Marriage',             date:'2026-02-18', details:'Marriage under severe strain. Praying for healing and restoration of his home.'},
-  {pp:'PR202402230014',mPP:'MB20240197',member:'Mansa Dankwah',   topic:'Marriage',             date:'2026-02-23', details:'Believes God has shown her a life partner but the relationship has stalled. Seeking clarity.'},
-  {pp:'PR202403020016',mPP:'MB20240221',member:'Adjoa Ofori',     topic:'Marriage',             date:'2026-03-02', details:'Recently widowed. Praying for peace, direction, and when the time is right, a new companion.'},
-
-  /* ── Healing / Health (5) ── */
-  {pp:'PR202402160007',mPP:'MB20240113',member:'Akosua Fofie',    topic:'Healing',              date:'2026-02-16', details:'Diagnosed with Type 2 diabetes last month. Trusting God for complete healing and strength.'},
-  {pp:'PR202402200011',mPP:'MB20240161',member:'Kwesi Bimpong',   topic:'Healing',              date:'2026-02-20', details:'Father admitted to Korle Bu with kidney complications. Family requesting urgent prayer.'},
-  {pp:'PR202403030017',mPP:'MB20240233',member:'Efua Amoah',      topic:'Healing',              date:'2026-03-03', details:'Struggling with severe depression for 18 months. Believes God is her healer and deliverer.'},
-  {pp:'PR202403040018',mPP:'MB20240245',member:'Kofi Adu-Boahen', topic:'Healing',              date:'2026-03-04', details:'Post-surgery recovery after a road accident. Doctors say 6 more months of rehabilitation.'},
-  {pp:'PR202403050019',mPP:'MB20240257',member:'Abena Asiedua',   topic:'Healing',              date:'2026-03-05', details:'Child born with a congenital heart condition. Parents praying for miraculous healing.'},
-
-  /* ── School Admission / Education (5) ── */
-  {pp:'PR202402150006',mPP:'MB20240101',member:'Yaw Owusu',       topic:'School Admission',     date:'2026-02-15', details:'Waiting for admission into UG Medical School. Applied three times. Trusting God this season.'},
-  {pp:'PR202402190010',mPP:'MB20240149',member:'Adwoa Poku',      topic:'School Admission',     date:'2026-02-19', details:'Daughter hoping to gain entry into PRESEC for WASSCE. Parents fasting and praying.'},
-  {pp:'PR202403010020',mPP:'MB20240269',member:'Kwadwo Asare',    topic:'School Admission',     date:'2026-03-01', details:'Scholarship application to a UK university pending. Visa interview scheduled for next month.'},
-  {pp:'PR202403020021',mPP:'MB20240281',member:'Maame Osei',      topic:'School Admission',     date:'2026-03-02', details:'Waiting for WAEC results. Has been praying for excellent grades to secure a nursing place.'},
-  {pp:'PR202403040022',mPP:'MB20240293',member:'Opoku Acheampong',topic:'School Admission',     date:'2026-03-04', details:'Son applying for technical vocational training. Family cannot afford fees if not admitted on scholarship.'},
-
-  /* ── Travel Opportunity (3) ── */
-  {pp:'PR202402140005',mPP:'MB20240090',member:'Abena Kyei',      topic:'Travel Opportunity',   date:'2026-02-14', details:'US visa application has been denied twice. Trusting God for a miracle at the next interview.'},
-  {pp:'PR202403010023',mPP:'MB20240305',member:'Nana Ama Asante', topic:'Travel Opportunity',   date:'2026-03-01', details:'Scholarship approved but Schengen visa pending. Embassy appointment booked for March 20.'},
-  {pp:'PR202403050024',mPP:'MB20240317',member:'Kofi Annan Jnr.', topic:'Travel Opportunity',   date:'2026-03-05', details:'Invited for a medical mission trip to Liberia. Praying for smooth travel, safety, and impact.'},
-
-  /* ── Finances / Business (4) ── */
-  {pp:'PR202402210012',mPP:'MB20240173',member:'Afia Osei',       topic:'Finances',             date:'2026-02-21', details:'Small trading business has been running at a loss for 6 months. Praying for a turnaround.'},
-  {pp:'PR202403020025',mPP:'MB20240329',member:'Yaw Darko',       topic:'Finances',             date:'2026-03-02', details:'Struggling to pay children\'s school fees. Praying for unexpected financial breakthrough.'},
-  {pp:'PR202403030026',mPP:'MB20240341',member:'Akua Mensah',     topic:'Finances',             date:'2026-03-03', details:'Applying for a GCB business loan. Documentation complete. Waiting on approval.'},
-  {pp:'PR202403040027',mPP:'MB20240353',member:'Badu Opoku',      topic:'Finances',             date:'2026-03-04', details:'Owes GHS 12,000 to a supplier and cannot meet the deadline. Praying for God\'s provision.'},
-
-  /* ── Family / Protection (3) ── */
-  {pp:'PR202403010028',mPP:'MB20240365',member:'Ama Serwaa',      topic:'Family Protection',    date:'2026-03-01', details:'Son involved in wrong company at university. Mother praying for divine intervention and restoration.'},
-  {pp:'PR202403030029',mPP:'MB20240377',member:'Kweku Barimah',   topic:'Family Protection',    date:'2026-03-03', details:'Sister living abroad has not been in contact for 3 weeks. Family requesting prayer for safety.'},
-  {pp:'PR202403050030',mPP:'MB20240389',member:'Adwoa Nimako',    topic:'Family Protection',    date:'2026-03-05', details:'Husband travels frequently for work. Wife praying for travel mercies and household protection.'},
+  /* Job Opportunity (5) */
+  {pp:'PR202402100001',mPP:'MB20240012',member:'Kwame Asante',    topic:'Job Opportunity',    date:'2026-02-10',details:'Seeking a breakthrough in securing a permanent government position after 3 years of contract work.'},
+  {pp:'PR202402110002',mPP:'MB20240034',member:'Ama Boateng',     topic:'Job Opportunity',    date:'2026-02-11',details:'Recently laid off from her banking job. Praying for a new position before month end.'},
+  {pp:'PR202402170008',mPP:'MB20240125',member:'Nana Tawiah',     topic:'Job Opportunity',    date:'2026-02-17',details:'Graduate of KNUST engineering program, has been job-hunting for 8 months. Needs divine intervention.'},
+  {pp:'PR202402220013',mPP:'MB20240185',member:'Yao Kumi',        topic:'Job Opportunity',    date:'2026-02-22',details:'Praying for a promotion to senior manager after being passed over twice this year.'},
+  {pp:'PR202403010015',mPP:'MB20240209',member:'Serwaa Frimpong', topic:'Job Opportunity',    date:'2026-03-01',details:'Applying for a USAID programme position. Final interview scheduled next week. Trusting God.'},
+  /* Marriage / Relationship (5) */
+  {pp:'PR202402120003',mPP:'MB20240056',member:'Kofi Mensah',     topic:'Marriage',           date:'2026-02-12',details:'Praying for God to reveal the right life partner. Has been believing for 5 years.'},
+  {pp:'PR202402130004',mPP:'MB20240078',member:'Esi Darko',       topic:'Marriage',           date:'2026-02-13',details:'Engaged but facing strong family opposition. Requesting prayer for peace and unity.'},
+  {pp:'PR202402180009',mPP:'MB20240137',member:'Fiifi Sarpong',   topic:'Marriage',           date:'2026-02-18',details:'Marriage under severe strain. Praying for healing and restoration of his home.'},
+  {pp:'PR202402230014',mPP:'MB20240197',member:'Mansa Dankwah',   topic:'Marriage',           date:'2026-02-23',details:'Believes God has shown her a life partner but the relationship has stalled. Seeking clarity.'},
+  {pp:'PR202403020016',mPP:'MB20240221',member:'Adjoa Ofori',     topic:'Marriage',           date:'2026-03-02',details:'Recently widowed. Praying for peace, direction, and when the time is right, a new companion.'},
+  /* Healing / Health (5) */
+  {pp:'PR202402160007',mPP:'MB20240113',member:'Akosua Fofie',    topic:'Healing',            date:'2026-02-16',details:'Diagnosed with Type 2 diabetes last month. Trusting God for complete healing and strength.'},
+  {pp:'PR202402200011',mPP:'MB20240161',member:'Kwesi Bimpong',   topic:'Healing',            date:'2026-02-20',details:'Father admitted to Korle Bu with kidney complications. Family requesting urgent prayer.'},
+  {pp:'PR202403030017',mPP:'MB20240233',member:'Efua Amoah',      topic:'Healing',            date:'2026-03-03',details:'Struggling with severe depression for 18 months. Believes God is her healer and deliverer.'},
+  {pp:'PR202403040018',mPP:'MB20240245',member:'Kofi Adu-Boahen', topic:'Healing',            date:'2026-03-04',details:'Post-surgery recovery after a road accident. Doctors say 6 more months of rehabilitation.'},
+  {pp:'PR202403050019',mPP:'MB20240257',member:'Abena Asiedua',   topic:'Healing',            date:'2026-03-05',details:'Child born with a congenital heart condition. Parents praying for miraculous healing.'},
+  /* School Admission / Education (5) */
+  {pp:'PR202402150006',mPP:'MB20240101',member:'Yaw Owusu',       topic:'School Admission',   date:'2026-02-15',details:'Waiting for admission into UG Medical School. Applied three times. Trusting God this season.'},
+  {pp:'PR202402190010',mPP:'MB20240149',member:'Adwoa Poku',      topic:'School Admission',   date:'2026-02-19',details:'Daughter hoping to gain entry into PRESEC for WASSCE. Parents fasting and praying.'},
+  {pp:'PR202403010020',mPP:'MB20240269',member:'Kwadwo Asare',    topic:'School Admission',   date:'2026-03-01',details:'Scholarship application to a UK university pending. Visa interview scheduled for next month.'},
+  {pp:'PR202403020021',mPP:'MB20240281',member:'Maame Osei',      topic:'School Admission',   date:'2026-03-02',details:'Waiting for WAEC results. Has been praying for excellent grades to secure a nursing place.'},
+  {pp:'PR202403040022',mPP:'MB20240293',member:'Opoku Acheampong',topic:'School Admission',   date:'2026-03-04',details:'Son applying for technical vocational training. Family cannot afford fees if not admitted on scholarship.'},
+  /* Travel Opportunity (3) */
+  {pp:'PR202402140005',mPP:'MB20240090',member:'Abena Kyei',      topic:'Travel Opportunity', date:'2026-02-14',details:'US visa application has been denied twice. Trusting God for a miracle at the next interview.'},
+  {pp:'PR202403010023',mPP:'MB20240305',member:'Nana Ama Asante', topic:'Travel Opportunity', date:'2026-03-01',details:'Scholarship approved but Schengen visa pending. Embassy appointment booked for March 20.'},
+  {pp:'PR202403050024',mPP:'MB20240317',member:'Kofi Annan Jnr.', topic:'Travel Opportunity', date:'2026-03-05',details:'Invited for a medical mission trip to Liberia. Praying for smooth travel, safety, and impact.'},
+  /* Finances / Business (4) */
+  {pp:'PR202402210012',mPP:'MB20240173',member:'Afia Osei',       topic:'Finances',           date:'2026-02-21',details:'Small trading business has been running at a loss for 6 months. Praying for a turnaround.'},
+  {pp:'PR202403020025',mPP:'MB20240329',member:'Yaw Darko',       topic:'Finances',           date:'2026-03-02',details:'Struggling to pay children\'s school fees. Praying for unexpected financial breakthrough.'},
+  {pp:'PR202403030026',mPP:'MB20240341',member:'Akua Mensah',     topic:'Finances',           date:'2026-03-03',details:'Applying for a GCB business loan. Documentation complete. Waiting on approval.'},
+  {pp:'PR202403040027',mPP:'MB20240353',member:'Badu Opoku',      topic:'Finances',           date:'2026-03-04',details:'Owes GHS 12,000 to a supplier and cannot meet the deadline. Praying for God\'s provision.'},
+  /* Family / Protection (3) */
+  {pp:'PR202403010028',mPP:'MB20240365',member:'Ama Serwaa',      topic:'Family Protection',  date:'2026-03-01',details:'Son involved in wrong company at university. Mother praying for divine intervention and restoration.'},
+  {pp:'PR202403030029',mPP:'MB20240377',member:'Kweku Barimah',   topic:'Family Protection',  date:'2026-03-03',details:'Sister living abroad has not been in contact for 3 weeks. Family requesting prayer for safety.'},
+  {pp:'PR202403050030',mPP:'MB20240389',member:'Adwoa Nimako',    topic:'Family Protection',  date:'2026-03-05',details:'Husband travels frequently for work. Wife praying for travel mercies and household protection.'},
 ];
+
 var MEMBERS={
   'MB20240001':{name:'Elder Mensah',    role:'Elder',   ini:'EM'},
   'MB20240002':{name:'Pastor Amo',      role:'Pastor',  ini:'PA'},
@@ -597,28 +613,49 @@ var MEMBERS={
   'MB20240006':{name:'Deacon Frimpong', role:'Deacon',  ini:'DF'},
   'MB20240007':{name:'Bro. Kojo Asante',role:'Member',  ini:'KA'},
 };
+
+/* topic colours */
+var TOPIC_COLORS={
+  'Job Opportunity':    'background:#dbeafe;color:#1d4ed8',
+  'Marriage':           'background:#fce7f3;color:#be185d',
+  'Healing':            'background:#dcfce7;color:#15803d',
+  'School Admission':   'background:#fef9c3;color:#a16207',
+  'Travel Opportunity': 'background:e0f2fe;color:#0369a1',
+  'Finances':           'background:#f3e8ff;color:#7c3aed',
+  'Family Protection':  'background:#fff7ed;color:#c2410c',
+};
+
 var prayerList=[],groups=[],leaderPP='',leaderData=null,prayedLive=160,totalLive=200,doneLiveGrps=2;
 var $ngM,$lM;
+
 document.addEventListener('DOMContentLoaded',function(){
   $ngM=new bootstrap.Modal(document.getElementById('ngModal'));
   $lM=new bootstrap.Modal(document.getElementById('ldrModal'));
+
+  // sidebar mobile toggle
   var ham=document.getElementById('ham'),sb=document.getElementById('sidebar'),ov=document.getElementById('ov');
   function closeSB(){sb.classList.remove('open');ov.classList.remove('show');document.body.style.overflow='';}
   ham.addEventListener('click',function(){var o=sb.classList.toggle('open');ov.classList.toggle('show',o);document.body.style.overflow=o?'hidden':'';});
   ov.addEventListener('click',closeSB);
   window.addEventListener('resize',function(){if(window.innerWidth>=992)closeSB();});
   document.addEventListener('keydown',function(e){if(e.key==='Escape')closeSB();});
+
+  // default groups
   groups=[
-    {name:'Job Opportunities',   icon:'bi-briefcase',      desc:'',items:[]},
-    {name:'Marriage',            icon:'bi-hearts',         desc:'',items:[]},
-    {name:'Healing',             icon:'bi-activity',       desc:'',items:[]},
-    {name:'Education / Schools', icon:'bi-mortarboard',    desc:'',items:[]},
-    {name:'Travel Opportunities',icon:'bi-airplane',       desc:'',items:[]},
-    {name:'Finances / Business', icon:'bi-cash-coin',      desc:'',items:[]},
-    {name:'Family Protection',   icon:'bi-people',         desc:'',items:[]},
+    {name:'Job Opportunities',   icon:'bi-briefcase',   desc:'',items:[]},
+    {name:'Marriage',            icon:'bi-hearts',      desc:'',items:[]},
+    {name:'Healing',             icon:'bi-activity',    desc:'',items:[]},
+    {name:'Education / Schools', icon:'bi-mortarboard', desc:'',items:[]},
+    {name:'Travel Opportunities',icon:'bi-airplane',    desc:'',items:[]},
+    {name:'Finances / Business', icon:'bi-cash-coin',   desc:'',items:[]},
+    {name:'Family Protection',   icon:'bi-people',      desc:'',items:[]},
   ];
-  renderPool();renderGroupSel();refreshCounts();
+  renderPool();
+  renderGroupSel();
+  refreshCounts();
 });
+
+/* ── View switching ── */
 function sv(v){
   ['vSessions','vBuilder','vLive'].forEach(function(id){document.getElementById(id).style.display='none';});
   var m={sessions:'Sessions',builder:'Prayer List Builder',live:'Live Session'};
@@ -626,23 +663,17 @@ function sv(v){
   document.getElementById('v'+v.charAt(0).toUpperCase()+v.slice(1)).style.display='block';
   if(v==='live'&&leaderPP)document.getElementById('liveLdrPP').textContent=leaderPP;
 }
+
+/* ── Pool rendering ── */
 function renderPool(){
   var q=(document.getElementById('poolQ').value||'').toLowerCase();
   var body=document.getElementById('poolBody'),html='',shown=0;
   POOL.forEach(function(r){
-    if(q&&!r.pp.toLowerCase().includes(q)&&!r.topic.toLowerCase().includes(q)&&!r.mPP.toLowerCase().includes(q)&&!r.member.toLowerCase().includes(q))return;
+    if(q&&!r.pp.toLowerCase().includes(q)&&!r.topic.toLowerCase().includes(q)
+      &&!r.mPP.toLowerCase().includes(q)&&!r.member.toLowerCase().includes(q))return;
     shown++;
     var chk=prayerList.includes(r.pp);
-    /* topic colour */
-    var tColor={
-      'Job Opportunity':'#dbeafe;color:#1d4ed8',
-      'Marriage':'#fce7f3;color:#be185d',
-      'Healing':'#dcfce7;color:#15803d',
-      'School Admission':'#fef9c3;color:#a16207',
-      'Travel Opportunity':'#e0f2fe;color:#0369a1',
-      'Finances':'#f3e8ff;color:#7c3aed',
-      'Family Protection':'#fff7ed;color:#c2410c',
-    }[r.topic]||'#f1f5f9;color:#475569';
+    var tc=TOPIC_COLORS[r.topic]||'background:#f1f5f9;color:#475569';
     html+='<tr class="pool-row'+(chk?' sel':'')+'" id="pr-'+r.pp+'">'
       +'<td style="text-align:center;"><input type="checkbox" class="pchk" data-pp="'+r.pp+'"'+(chk?' checked':'')
       +' onchange="onChk(this)"></td>'
@@ -650,34 +681,73 @@ function renderPool(){
       +'<td><span style="font-family:monospace;font-size:.77rem;font-weight:600;">'+r.mPP+'</span>'
       +'<br><span style="font-size:.73rem;color:var(--muted);">'+r.member+'</span></td>'
       +'<td>'
-      +  '<span class="badge" style="background:'+tColor+';margin-bottom:3px;display:inline-block;">'+r.topic+'</span>'
-      +  (r.details?'<br><span style="font-size:.72rem;color:var(--muted);" title="'+r.details.replace(/"/g,"&quot;")+'" data-bs-toggle="tooltip">'+r.details.substring(0,48)+(r.details.length>48?'…':'')+'</span>':'')
+      +'<span class="badge" style="'+tc+';margin-bottom:3px;display:inline-block;">'+r.topic+'</span>'
+      +(r.details?'<br><span style="font-size:.72rem;color:var(--muted);" title="'+r.details.replace(/"/g,'&quot;')+'" data-bs-toggle="tooltip">'+r.details.substring(0,52)+(r.details.length>52?'…':'')+'</span>':'')
       +'</td>'
       +'<td><small>'+r.date+'</small></td>'
       +'</tr>';
   });
-  if(!shown)html='<tr><td colspan="5" class="text-center py-3" style="color:var(--muted);"><i class="bi bi-search me-1"></i>No results.</td></tr>';
+  if(!shown)html='<tr><td colspan="5" class="text-center py-3" style="color:var(--muted);"><i class="bi bi-search me-1"></i>No results found.</td></tr>';
   body.innerHTML=html;
-  /* re-init tooltips on newly rendered rows */
   body.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function(el){new bootstrap.Tooltip(el,{trigger:'hover'});});
   syncMaster();
 }
+
 function onChk(chk){
   var pp=chk.dataset.pp,row=document.getElementById('pr-'+pp);
-  if(chk.checked){if(!prayerList.includes(pp))prayerList.push(pp);if(row)row.classList.add('sel');}
-  else{prayerList=prayerList.filter(function(x){return x!==pp;});groups.forEach(function(g){g.items=g.items.filter(function(x){return x!==pp;});});if(row)row.classList.remove('sel');}
-  renderPL();renderGroupSel();renderGS();refreshCounts();syncMaster();
+  if(chk.checked){
+    if(!prayerList.includes(pp))prayerList.push(pp);
+    if(row)row.classList.add('sel');
+  } else {
+    prayerList=prayerList.filter(function(x){return x!==pp;});
+    groups.forEach(function(g){g.items=g.items.filter(function(x){return x!==pp;});});
+    if(row)row.classList.remove('sel');
+  }
+  renderPL();renderGroupSel();renderGrpBuilder();refreshCounts();syncMaster();
 }
-function masterTick(m){POOL.forEach(function(r){var c=document.querySelector('.pchk[data-pp="'+r.pp+'"]');if(c){c.checked=m.checked;onChk(c);}});}
-function selectAll(){POOL.forEach(function(r){if(!prayerList.includes(r.pp)){prayerList.push(r.pp);var row=document.getElementById('pr-'+r.pp);if(row)row.classList.add('sel');var c=document.querySelector('.pchk[data-pp="'+r.pp+'"]');if(c)c.checked=true;}});renderPL();renderGroupSel();refreshCounts();syncMaster();}
-function clearAll(){if(prayerList.length&&!confirm('Remove all '+prayerList.length+' requests from the prayer list?'))return;prayerList=[];groups.forEach(function(g){g.items=[];});renderPool();renderPL();renderGroupSel();renderGS();refreshCounts();}
-function syncMaster(){var all=document.querySelectorAll('.pchk'),chk=document.querySelectorAll('.pchk:checked'),m=document.getElementById('chkAll');if(!m||!all.length)return;m.indeterminate=chk.length>0&&chk.length<all.length;m.checked=all.length>0&&chk.length===all.length;}
+
+function masterTick(m){
+  POOL.forEach(function(r){
+    var c=document.querySelector('.pchk[data-pp="'+r.pp+'"]');
+    if(c){c.checked=m.checked;onChk(c);}
+  });
+}
+
+function selectAll(){
+  POOL.forEach(function(r){
+    if(!prayerList.includes(r.pp)){
+      prayerList.push(r.pp);
+      var row=document.getElementById('pr-'+r.pp);if(row)row.classList.add('sel');
+      var c=document.querySelector('.pchk[data-pp="'+r.pp+'"]');if(c)c.checked=true;
+    }
+  });
+  renderPL();renderGroupSel();renderGrpBuilder();refreshCounts();syncMaster();
+}
+
+function clearAll(){
+  if(prayerList.length&&!confirm('Remove all '+prayerList.length+' request(s) from the prayer list?'))return;
+  prayerList=[];
+  groups.forEach(function(g){g.items=[];});
+  renderPool();renderPL();renderGroupSel();renderGrpBuilder();refreshCounts();
+}
+
+function syncMaster(){
+  var all=document.querySelectorAll('.pchk'),chk=document.querySelectorAll('.pchk:checked'),m=document.getElementById('chkAll');
+  if(!m||!all.length)return;
+  m.indeterminate=chk.length>0&&chk.length<all.length;
+  m.checked=all.length>0&&chk.length===all.length;
+}
+
+/* ── Prayer List rendering ── */
 function renderPL(){
   var wrap=document.getElementById('plWrap'),badge=document.getElementById('plBadge'),clrBtn=document.getElementById('btnClrList');
   badge.textContent=prayerList.length;
   if(!prayerList.length){
     var empty=document.getElementById('plEmpty');
-    if(!empty){empty=document.createElement('div');empty.id='plEmpty';empty.className='pl-empty';empty.innerHTML='<i class="bi bi-journal-plus"></i><p>No requests yet.<br>Tick rows in the pool above to build the list.</p>';}
+    if(!empty){
+      empty=document.createElement('div');empty.id='plEmpty';empty.className='pl-empty';
+      empty.innerHTML='<i class="bi bi-journal-plus"></i><p>No requests yet.<br>Tick rows in the pool above to build the list.</p>';
+    }
     wrap.innerHTML='';wrap.appendChild(empty);clrBtn.style.display='none';return;
   }
   clrBtn.style.display='';
@@ -689,15 +759,24 @@ function renderPL(){
       +'<div class="pl-num">'+(i+1)+'</div>'
       +'<span class="pl-code">'+pp+'</span>'
       +'<div class="flex-fill"><div class="pl-topic">'+r.topic+'</div>'
-      +'<div style="font-size:.73rem;color:var(--muted);">'+r.mPP+' - '+r.member
+      +'<div style="font-size:.73rem;color:var(--muted);">'+r.mPP+' &mdash; '+r.member
       +(gn?' <span class="badge" style="background:#e8f0fe;color:#4154f1;font-size:.64rem;">'+gn+'</span>':'')
       +'</div></div>'
-      +'<button class="pl-remove" onclick="removePL(''+pp+'')" title="Remove"><i class="bi bi-x-lg"></i></button>'
+      +'<button class="pl-remove" onclick="removePL(\''+pp+'\')" title="Remove"><i class="bi bi-x-lg"></i></button>'
       +'</div>';
   });
   wrap.innerHTML=html;
 }
-function removePL(pp){var c=document.querySelector('.pchk[data-pp="'+pp+'"]');if(c){c.checked=false;onChk(c);return;}prayerList=prayerList.filter(function(x){return x!==pp;});groups.forEach(function(g){g.items=g.items.filter(function(x){return x!==pp;});});renderPL();renderGS();refreshCounts();}
+
+function removePL(pp){
+  var c=document.querySelector('.pchk[data-pp="'+pp+'"]');
+  if(c){c.checked=false;onChk(c);return;}
+  prayerList=prayerList.filter(function(x){return x!==pp;});
+  groups.forEach(function(g){g.items=g.items.filter(function(x){return x!==pp;});});
+  renderPL();renderGrpBuilder();refreshCounts();
+}
+
+/* ── Counts ── */
 function refreshCounts(){
   var t=POOL.length,s=prayerList.length,p=t>0?Math.round(s/t*100):0;
   document.getElementById('cbSel').textContent=s;
@@ -710,42 +789,122 @@ function refreshCounts(){
   document.getElementById('sideGrps').textContent=groups.length;
   document.getElementById('btnStart').disabled=s===0;
 }
-function renderGroupSel(){var sel=document.getElementById('gSel'),prev=sel.value;sel.innerHTML='<option value="">-- choose group --</option>';groups.forEach(function(g,i){var o=document.createElement('option');o.value=i;o.textContent=g.name+(g.items.length?' ('+g.items.length+')':'');sel.appendChild(o);});sel.value=prev;}
-function assignGroup(){var idx=document.getElementById('gSel').value;if(idx===''){toast('Please choose a group first.');return;}var added=prayerList.filter(function(pp){return !groups[idx].items.includes(pp);});if(!added.length){toast('All selected requests are already in this group.');return;}groups[idx].items=groups[idx].items.concat(added);renderGroupSel();renderGS();renderPL();toast(added.length+' request(s) added to "'+groups[idx].name+'"');}
+
+/* ── Group select dropdown ── */
+function renderGroupSel(){
+  var sel=document.getElementById('gSel'),prev=sel.value;
+  sel.innerHTML='<option value="">-- choose group --</option>';
+  groups.forEach(function(g,i){
+    var o=document.createElement('option');o.value=i;
+    o.textContent=g.name+(g.items.length?' ('+g.items.length+')':'');
+    sel.appendChild(o);
+  });
+  sel.value=prev;
+}
+
+function assignGroup(){
+  var idx=document.getElementById('gSel').value;
+  if(idx===''){toast('Please choose a group first.');return;}
+  var added=prayerList.filter(function(pp){return !groups[idx].items.includes(pp);});
+  if(!added.length){toast('All selected requests are already in this group.');return;}
+  groups[idx].items=groups[idx].items.concat(added);
+  renderGroupSel();renderGrpBuilder();renderPL();
+  toast(added.length+' request(s) added to "'+groups[idx].name+'"');
+}
+
+/* ── New Group Modal ── */
 function openNGM(){$ngM.show();}
-function createGroup(){var n=document.getElementById('ngName').value.trim();if(!n){toast('Group name is required.');return;}groups.push({name:n,icon:document.getElementById('ngIcon').value,desc:document.getElementById('ngDesc').value.trim(),items:[]});document.getElementById('ngName').value='';document.getElementById('ngDesc').value='';$ngM.hide();renderGroupSel();renderGS();refreshCounts();toast('Group "'+n+'" created!');}
-function renderGS(){
-  var card=document.getElementById('grpSummCard'),body=document.getElementById('grpSummBody');
-  var has=groups.some(function(g){return g.items.length>0;});
-  if(!has){card.style.display='none';return;}
+function createGroup(){
+  var n=document.getElementById('ngName').value.trim();
+  if(!n){toast('Group name is required.');return;}
+  groups.push({name:n,icon:document.getElementById('ngIcon').value,desc:document.getElementById('ngDesc').value.trim(),items:[]});
+  document.getElementById('ngName').value='';document.getElementById('ngDesc').value='';
+  $ngM.hide();renderGroupSel();renderGrpBuilder();refreshCounts();toast('Group "'+n+'" created!');
+}
+
+/* ── Groups in Builder (replaces old grpSummCard) ── */
+function renderGrpBuilder(){
+  var card=document.getElementById('grpBuilderCard'),body=document.getElementById('grpBuilderBody');
+  var hasItems=groups.some(function(g){return g.items.length>0;});
+  if(!hasItems){card.style.display='none';return;}
   card.style.display='block';
   var html='';
-  groups.forEach(function(g,i){
+  groups.forEach(function(g,gi){
     if(!g.items.length)return;
-    html+='<div class="gcard mb-2"><div class="gch" onclick="tgGS('+i+')">'
-      +'<div class="gicon" style="background:var(--p-lt);color:var(--p);"><i class="bi '+g.icon+'"></i></div>'
-      +'<div class="flex-fill"><p class="gtitle">'+g.name+'</p><p class="gmeta">'+g.items.length+' request(s)</p></div>'
-      +'<i class="bi bi-chevron-down" id="gsc-'+i+'" style="transition:transform .2s;"></i>'
-      +'</div><div class="collapse show" id="gsb-'+i+'">';
-    g.items.forEach(function(pp){var r=POOL.find(function(x){return x.pp===pp;});if(!r)return;html+='<div style="display:flex;align-items:center;gap:10px;padding:8px 16px;border-bottom:1px solid #f0f3ff;font-size:.8rem;"><span style="font-family:monospace;font-size:.73rem;color:var(--muted);min-width:138px;">'+pp+'</span><span style="font-weight:600;flex:1;">'+r.topic+'</span><span style="font-size:.74rem;color:var(--muted);">'+r.mPP+'</span></div>';});
+    html+='<div class="group-card mb-2">'
+      +'<div class="group-card-header" onclick="tgGrp('+gi+')">'
+      +'<div class="group-icon" style="background:var(--p-lt);color:var(--p);"><i class="bi '+g.icon+'"></i></div>'
+      +'<div class="flex-fill"><p class="group-title">'+g.name+'</p><p class="group-meta">'+g.items.length+' request(s)</p></div>'
+      +'<span class="badge bg-primary me-2">'+g.items.length+'</span>'
+      +'<i class="bi bi-chevron-down" id="grpchev-'+gi+'" style="transition:transform .2s;font-size:.8rem;color:var(--muted);"></i>'
+      +'</div>'
+      +'<div class="group-card-body collapse show" id="grpbody-'+gi+'">';
+    g.items.forEach(function(pp){
+      var r=POOL.find(function(x){return x.pp===pp;});if(!r)return;
+      var tc=TOPIC_COLORS[r.topic]||'background:#f1f5f9;color:#475569';
+      html+='<div class="prayer-item">'
+        +'<span class="pi-code">'+pp+'</span>'
+        +'<div class="flex-fill"><div class="pi-topic">'+r.topic+'</div>'
+        +'<div class="pi-detail">'+r.mPP+' &mdash; '+r.member+'</div></div>'
+        +'<span class="pi-status"><span class="badge" style="'+tc+';">Pending</span></span>'
+        +'</div>';
+    });
     html+='</div></div>';
   });
   body.innerHTML=html;
 }
-function tgGS(i){var b=document.getElementById('gsb-'+i),c=document.getElementById('gsc-'+i);b.classList.toggle('show');c.style.transform=b.classList.contains('show')?'':'rotate(-90deg)';}
+
+function tgGrp(gi){
+  var b=document.getElementById('grpbody-'+gi),c=document.getElementById('grpchev-'+gi);
+  if(!b)return;
+  b.classList.toggle('show');
+  c.style.transform=b.classList.contains('show')?'':'rotate(-90deg)';
+}
+
+/* ── Leader lookup ── */
 function lookupLeader(){
   var pp=(document.getElementById('leaderInput').value||'').trim().toUpperCase();
   if(!pp){toast('Enter a PPCode first.');return;}
   var m=MEMBERS[pp]||null,body=document.getElementById('ldrBody'),cfm=document.getElementById('btnConfLdr');
-  if(!m){body.innerHTML='<div class="text-center py-3"><i class="bi bi-person-x" style="font-size:2rem;color:var(--danger);"></i><p class="mt-2 mb-0" style="color:var(--danger);font-weight:700;">PPCode not found</p><p class="mt-1" style="font-size:.82rem;color:var(--muted);">No member matched <code>'+pp+'</code></p></div>';cfm.disabled=true;}
-  else{body.innerHTML='<div class="leader-card mb-2"><div class="lav">'+m.ini+'</div><div><div class="lname">'+m.name+'</div><div class="lsub">'+m.role+' - '+pp+'</div></div></div><p class="mb-0" style="font-size:.8rem;color:var(--muted);">Confirm as Prayer Leader?</p>';cfm.disabled=false;cfm.onclick=function(){leaderPP=pp;leaderData=m;document.getElementById('lAv').textContent=m.ini;document.getElementById('lName').textContent=m.name;document.getElementById('lSub').textContent=m.role+' - '+pp;document.getElementById('leaderCard').style.display='flex';$lM.hide();toast('Leader set: '+m.name+' ('+pp+')');};}
+  if(!m){
+    body.innerHTML='<div class="text-center py-3"><i class="bi bi-person-x" style="font-size:2rem;color:var(--danger);"></i>'
+      +'<p class="mt-2 mb-0" style="color:var(--danger);font-weight:700;">PPCode not found</p>'
+      +'<p class="mt-1" style="font-size:.82rem;color:var(--muted);">No member matched <code>'+pp+'</code></p></div>';
+    cfm.disabled=true;
+  } else {
+    body.innerHTML='<div class="leader-card mb-2"><div class="lav">'+m.ini+'</div>'
+      +'<div><div class="lname">'+m.name+'</div><div class="lsub">'+m.role+' - '+pp+'</div></div></div>'
+      +'<p class="mb-0" style="font-size:.8rem;color:var(--muted);">Confirm as Prayer Leader?</p>';
+    cfm.disabled=false;
+    cfm.onclick=function(){
+      leaderPP=pp;leaderData=m;
+      document.getElementById('lAv').textContent=m.ini;
+      document.getElementById('lName').textContent=m.name;
+      document.getElementById('lSub').textContent=m.role+' - '+pp;
+      document.getElementById('leaderCard').style.display='flex';
+      $lM.hide();toast('Leader set: '+m.name+' ('+pp+')');
+    };
+  }
   $lM.show();
 }
-function clearLeader(){leaderPP='';leaderData=null;document.getElementById('leaderInput').value='';document.getElementById('leaderCard').style.display='none';}
+
+function clearLeader(){
+  leaderPP='';leaderData=null;
+  document.getElementById('leaderInput').value='';
+  document.getElementById('leaderCard').style.display='none';
+}
+
+/* ── Live session: mark group prayed ── */
 function markPrayed(id,count){
   if(!confirm('Mark all '+count+' requests in this group as Prayed?'))return;
-  var card=document.getElementById(id),badge=card.querySelector('.badge'),bar=card.querySelector('.progress-bar'),meta=card.querySelector('.gmeta'),note=card.querySelector('.gbody p'),ctEl=card.querySelector('[style*="0.68rem"]'),btn=card.querySelector('button:not([disabled])');
-  card.classList.add('done');card.querySelector('.gch').style.background='var(--success-lt)';card.querySelector('.gch').style.borderColor='#b7e4c7';card.querySelector('.gtitle').style.color='var(--success)';
+  var card=document.getElementById(id);
+  var badge=card.querySelector('.badge'),bar=card.querySelector('.progress-bar'),
+      meta=card.querySelector('.gmeta'),note=card.querySelector('.gbody p'),
+      ctEl=card.querySelector('[style*="0.68rem"]'),btn=card.querySelector('button:not([disabled])');
+  card.classList.add('done');
+  card.querySelector('.gch').style.background='var(--success-lt)';
+  card.querySelector('.gch').style.borderColor='#b7e4c7';
+  card.querySelector('.gtitle').style.color='var(--success)';
   if(meta){meta.textContent=count+' requests - Prayed';meta.style.color='var(--success)';}
   badge.className='badge bg-success d-block mb-1';badge.textContent='Prayed';
   bar.style.width='100%';bar.className='progress-bar bg-success';
@@ -754,11 +913,20 @@ function markPrayed(id,count){
   if(btn){btn.disabled=true;btn.innerHTML='<i class="bi bi-check2-all me-1"></i>Done';btn.className='btn btn-outline-success btn-sm w-100';}
   prayedLive+=count;doneLiveGrps++;
   var pct=Math.min(100,Math.round(prayedLive/totalLive*100));
-  document.getElementById('ovPct').textContent=pct+'%';document.getElementById('ovBar').style.width=pct+'%';document.getElementById('ovLbl').textContent=prayedLive+' of '+totalLive+' prayed';
-  if(!document.querySelectorAll('#liveGrps .gcard:not(.done)').length)document.getElementById('closeSessDiv').style.display='block';
+  document.getElementById('ovPct').textContent=pct+'%';
+  document.getElementById('ovBar').style.width=pct+'%';
+  document.getElementById('ovLbl').textContent=prayedLive+' of '+totalLive+' prayed';
+  if(!document.querySelectorAll('#liveGrps .gcard:not(.done)').length)
+    document.getElementById('closeSessDiv').style.display='block';
 }
+
+/* ── Toast ── */
 var _tt;
-function toast(msg){var el=document.getElementById('toastEl');el.textContent=msg;el.classList.add('show');clearTimeout(_tt);_tt=setTimeout(function(){el.classList.remove('show');},2800);}
+function toast(msg){
+  var el=document.getElementById('toastEl');
+  el.textContent=msg;el.classList.add('show');
+  clearTimeout(_tt);_tt=setTimeout(function(){el.classList.remove('show');},2800);
+}
 </script>
 </body>
 </html>
