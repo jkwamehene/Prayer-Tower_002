@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Prayer Tower - VCMIS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+:root{--p:#4154f1;--p-dk:#2c3fd4;--p-lt:#eef0fd;--success:#198754;--success-lt:#f0fff4;--warn:#ffc107;--danger:#dc3545;--bg:#f6f9ff;--surf:#fff;--border:#e0e6f0;--text:#333;--muted:#6c757d;--navy:#012970;--r:8px;--rsm:5px;--shadow:0 0 24px rgba(1,41,112,.08);--shadow-md:0 4px 20px rgba(1,41,112,.13);--sidebar-w:240px;--header-h:60px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Open Sans',sans-serif;background:var(--bg);color:var(--text);font-size:.9rem;min-height:100dvh;overflow-x:hidden;}
+::-webkit-scrollbar{width:5px;height:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:#cdd5e0;border-radius:4px;}
+#header{position:fixed;top:0;left:0;right:0;height:var(--header-h);background:var(--surf);box-shadow:0 2px 20px rgba(1,41,112,.1);display:flex;align-items:center;padding:0 18px;z-index:1040;gap:10px;}
+.logo{display:flex;align-items:center;gap:7px;font-family:'Nunito',sans-serif;font-size:1.1rem;font-weight:800;color:var(--p);text-decoration:none;white-space:nowrap;}
+.logo span{color:var(--navy);}
+#ham{display:none;background:none;border:none;padding:5px 7px;border-radius:5px;font-size:1.2rem;color:var(--navy);cursor:pointer;line-height:1;transition:background .15s;}
+#ham:hover{background:var(--p-lt);}
+.hsearch{flex:1;max-width:280px;margin:0 8px;position:relative;}
+.hsearch input{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:20px;padding:6px 14px 6px 32px;font-size:.82rem;color:var(--text);outline:none;transition:border .2s,box-shadow .2s;}
+.hsearch input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(65,84,241,.12);}
+.hsearch i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.85rem;pointer-events:none;}
+.hright{margin-left:auto;display:flex;align-items:center;gap:4px;}
+.hbtn{width:36px;height:36px;border:none;background:none;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--navy);font-size:1rem;cursor:pointer;position:relative;transition:background .15s;}
+.hbtn:hover{background:var(--p-lt);}
+.hbtn .dot{position:absolute;top:7px;right:7px;width:7px;height:7px;background:var(--danger);border-radius:50%;border:2px solid #fff;}
+.hdiv{width:1px;height:26px;background:var(--border);margin:0 6px;}
+.havatar{width:34px;height:34px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:700;font-size:.82rem;cursor:pointer;flex-shrink:0;box-shadow:0 0 0 2px #fff,0 0 0 4px rgba(65,84,241,.2);}
+#ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:1029;backdrop-filter:blur(2px);opacity:0;transition:opacity .25s;}
+#ov.show{opacity:1;}
+#sidebar{position:fixed;top:var(--header-h);left:0;width:var(--sidebar-w);height:calc(100dvh - var(--header-h));background:var(--surf);box-shadow:var(--shadow);overflow-y:auto;overflow-x:hidden;z-index:1030;padding:10px 0 40px;transition:transform .25s cubic-bezier(.4,0,.2,1);scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
+.slbl{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#899bbd;padding:14px 18px 5px;}
+.sa{display:flex;align-items:center;gap:8px;padding:8px 18px;color:var(--navy);text-decoration:none;font-size:.875rem;font-weight:600;border-left:3px solid transparent;transition:all .14s;white-space:nowrap;overflow:hidden;}
+.sa:hover{background:var(--bg);color:var(--p);}
+.sa.active{background:var(--p-lt);color:var(--p);border-left-color:var(--p);}
+.sa i{font-size:1rem;min-width:18px;flex-shrink:0;}
+.sa .lt{flex:1;}
+.sa .chev{font-size:.72rem;transition:transform .2s;margin-left:auto;}
+.sa[aria-expanded="true"] .chev{transform:rotate(180deg);}
+.sa .nb{font-size:.63rem;font-weight:700;padding:.2em .45em;flex-shrink:0;}
+.subnav{background:#fbfcff;}
+.subnav .sa{padding-left:38px;font-weight:400;font-size:.845rem;}
+.subnav .sa.active{font-weight:700;}
+#main{margin-left:var(--sidebar-w);margin-top:var(--header-h);padding:20px 24px 48px;min-height:calc(100dvh - var(--header-h));transition:margin-left .25s cubic-bezier(.4,0,.2,1);}
+.ptitle h1{font-family:'Nunito',sans-serif;font-size:1.35rem;font-weight:800;color:var(--navy);margin-bottom:2px;}
+.ptitle .breadcrumb{font-size:.78rem;margin:0;}
+.breadcrumb-item+.breadcrumb-item::before{color:var(--muted);}
+.breadcrumb-item a{color:var(--p);text-decoration:none;}
+.breadcrumb-item a:hover{text-decoration:underline;}
+.breadcrumb-item.active{color:var(--muted);}
+.card{border:none;border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:20px;background:var(--surf);}
+.card-body{padding:18px 22px;}
+.ctitle{font-family:'Nunito',sans-serif;font-size:.93rem;font-weight:700;color:var(--navy);padding:6px 0 12px;margin-bottom:14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+.ctl{display:flex;align-items:center;gap:7px;flex:1;flex-wrap:wrap;}
+.flabel{font-weight:600;font-size:.84rem;color:var(--navy);display:block;margin-bottom:4px;}
+.form-control,.form-select{border-radius:var(--rsm);border:1.5px solid #cfd5e3;font-size:.875rem;font-family:'Open Sans',sans-serif;padding:7px 11px;color:var(--text);transition:border .2s,box-shadow .2s;width:100%;outline:none;}
+.form-control:focus,.form-select:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(65,84,241,.12);}
+.form-control[readonly]{background:#f8f9fa;color:var(--muted);}
+textarea.form-control{resize:vertical;min-height:68px;}
+.hint{font-size:.78rem;color:var(--muted);margin-top:3px;}
+.btn{font-family:'Open Sans',sans-serif;font-weight:600;border-radius:var(--rsm);transition:all .15s;}
+.btn-primary{background:var(--p);border-color:var(--p);}
+.btn-primary:hover{background:var(--p-dk);border-color:var(--p-dk);}
+.btn-secondary{background:#f1f5f9;border-color:#e2e8f0;color:#475569;}
+.btn-secondary:hover{background:#e2e8f0;}
+.btn-outline-primary{border-color:var(--p);color:var(--p);}
+.btn-outline-primary:hover{background:var(--p-lt);color:var(--p);}
+.btn-outline-secondary{border-color:var(--border);color:var(--muted);}
+.btn-outline-secondary:hover{background:var(--bg);color:var(--text);}
+.btn-outline-success{border-color:var(--success);color:var(--success);}
+.table{font-size:.81rem;width:100%;border-collapse:collapse;}
+.table thead th{font-size:.72rem;font-weight:700;color:var(--navy);background:var(--bg);padding:9px 12px;white-space:nowrap;border-bottom:2px solid var(--border);vertical-align:middle;text-transform:uppercase;letter-spacing:.04em;}
+.table tbody td{padding:9px 12px;border-bottom:1px solid #f0f3ff;vertical-align:middle;}
+.table tbody tr:last-child td{border-bottom:none;}
+.table-hover tbody tr:hover td{background:#f5f7ff;}
+.table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.badge{font-size:.7rem;font-weight:700;padding:.3em .58em;border-radius:12px;letter-spacing:.02em;}
+.stage-steps{display:flex;margin-bottom:20px;overflow-x:auto;scrollbar-width:none;}
+.stage-steps::-webkit-scrollbar{display:none;}
+.stage-step{flex:1;min-width:80px;text-align:center;padding:10px 6px;font-size:.73rem;font-weight:700;border-top:3px solid var(--border);color:#aaa;text-transform:uppercase;letter-spacing:.04em;}
+.stage-step i{display:block;font-size:1rem;margin-bottom:3px;}
+.stage-step.done{border-top-color:var(--success);color:var(--success);}
+.stage-step.active{border-top-color:var(--p);color:var(--p);}
+.progress{height:7px;border-radius:99px;background:#e9ecef;overflow:hidden;}
+.progress-bar{border-radius:99px;transition:width .4s ease;}
+
+/* COUNTER BANNER */
+.cbanner{background:linear-gradient(135deg,#4154f1 0%,#6370f5 100%);color:#fff;border-radius:var(--r);padding:14px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px;box-shadow:var(--shadow-md);}
+.cbs{display:flex;flex-direction:column;align-items:center;min-width:58px;}
+.cbn{font-family:'Nunito',sans-serif;font-size:1.75rem;font-weight:800;line-height:1;letter-spacing:-.04em;}
+.cbl{font-size:.64rem;opacity:.78;text-transform:uppercase;letter-spacing:.07em;margin-top:1px;}
+.cbd{width:1px;height:36px;background:rgba(255,255,255,.22);}
+.cbprog{flex:1;min-width:130px;}
+.cbplbl{font-size:.73rem;opacity:.85;margin-bottom:4px;}
+.cbcov{font-size:.69rem;opacity:.76;margin-top:3px;}
+
+/* POOL */
+.pool-scroll{max-height:290px;overflow-y:auto;border:1px solid var(--border);border-radius:var(--rsm);}
+.pool-scroll thead th{position:sticky;top:0;z-index:2;background:var(--bg) !important;}
+tr.pool-row{transition:background .1s;}
+tr.pool-row.sel td{background:#eef0fd !important;}
+tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
+
+/* PRAYER LIST */
+.pl-wrap{border:1px solid var(--border);border-radius:var(--rsm);overflow:hidden;min-height:80px;}
+.pl-item{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid #f0f3ff;transition:background .12s;animation:fadeUp .18s ease;}
+.pl-item:last-child{border-bottom:none;}
+.pl-item:hover{background:var(--bg);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(-5px);}to{opacity:1;transform:translateY(0);}}
+.pl-num{width:22px;height:22px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:800;flex-shrink:0;}
+.pl-code{font-family:monospace;font-size:.72rem;color:var(--muted);min-width:106px;}
+.pl-topic{font-weight:600;font-size:.84rem;flex:1;}
+.pl-remove{background:none;border:none;color:#ccc;cursor:pointer;font-size:.95rem;padding:2px 5px;border-radius:4px;transition:color .12s,background .12s;flex-shrink:0;line-height:1;}
+.pl-remove:hover{color:var(--danger);background:#fff0f0;}
+.pl-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:32px 20px;color:var(--muted);text-align:center;}
+.pl-empty i{font-size:1.9rem;opacity:.3;}
+.pl-empty p{font-size:.83rem;margin:0;line-height:1.5;}
+
+/* GROUP CARDS */
+.gcard{border:1px solid var(--border);border-radius:var(--r);background:var(--surf);margin-bottom:14px;overflow:hidden;box-shadow:0 2px 10px rgba(1,41,112,.06);transition:box-shadow .2s,border-color .2s;}
+.gcard:hover{box-shadow:var(--shadow-md);}
+.gcard.done{border-color:#b7e4c7;}
+.gch{display:flex;align-items:center;gap:12px;padding:13px 18px;background:var(--bg);border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.gch:hover{background:#eef1fc;}
+.gcard.done .gch{background:var(--success-lt);border-color:#b7e4c7;}
+.gicon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;}
+.gtitle{font-family:'Nunito',sans-serif;font-weight:700;font-size:.88rem;color:var(--navy);margin:0;}
+.gmeta{font-size:.75rem;color:var(--muted);margin:0;}
+.gcard.done .gtitle{color:var(--success);}
+.gbody{padding:12px 18px 15px;}
+.gbody p{font-size:.8rem;color:var(--muted);margin-bottom:10px;}
+
+/* SESSION HEADER */
+.sess-hd{background:linear-gradient(135deg,#4154f1 0%,#6370f5 100%);color:#fff;border-radius:var(--r);box-shadow:var(--shadow-md);margin-bottom:18px;overflow:hidden;position:relative;}
+.sess-hd::after{content:'';position:absolute;top:-20px;right:-20px;width:130px;height:130px;background:rgba(255,255,255,.06);border-radius:50%;}
+.sess-hd .card-body{padding:18px 22px;position:relative;}
+
+/* LEADER CARD */
+.leader-card{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--rsm);border:1px solid #bae6fd;background:#f0f9ff;margin-top:8px;}
+.lav{width:36px;height:36px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:800;font-size:.82rem;flex-shrink:0;}
+.lname{font-family:'Nunito',sans-serif;font-weight:700;font-size:.88rem;color:var(--navy);}
+.lsub{font-size:.73rem;color:var(--muted);}
+.lclr{margin-left:auto;background:none;border:1px solid #bae6fd;border-radius:4px;color:#0369a1;font-size:.75rem;padding:2px 8px;cursor:pointer;transition:background .15s;white-space:nowrap;}
+.lclr:hover{background:#e0f2fe;}
+
+/* TOAST */
+.toast-el{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--navy);color:#fff;padding:9px 20px;border-radius:20px;font-size:.83rem;font-weight:600;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.2);opacity:0;transition:all .25s;pointer-events:none;}
+.toast-el.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* RESPONSIVE */
+@media(max-width:991.98px){#ham{display:flex;}.hsearch{display:none;}#ov{display:block;}#sidebar{transform:translateX(calc(-1 * var(--sidebar-w)));}#sidebar.open{transform:translateX(0);box-shadow:var(--shadow-md);}#main{margin-left:0;}}
+@media(max-width:767.98px){:root{--header-h:56px;}#main{padding:14px 12px 36px;}.ptitle h1{font-size:1.15rem;}.card-body{padding:14px 14px;}.cbanner{padding:12px 14px;gap:10px;}.cbn{font-size:1.4rem;}.pool-ctl{flex-direction:column !important;}.pool-ctl input,.pool-ctl button{width:100% !important;}.assign-bar{flex-direction:column !important;}.assign-bar select,.assign-bar button{width:100% !important;}.stage-step{min-width:64px;font-size:.62rem;padding:8px 3px;}.sess-hd .card-body{flex-direction:column !important;align-items:flex-start !important;}.sess-hd .ms-auto{margin-left:0 !important;}}
+@media(max-width:479.98px){.logo span{display:none;}#main{padding:10px 9px 28px;}.cbd{display:none;}}
+@media(min-width:1400px){:root{--sidebar-w:260px;}#main{padding:22px 32px 52px;}}
+@media print{#header,#sidebar,#ov,.btn,.dropdown{display:none !important;}#main{margin:0;padding:14px;}}
+</style>
+</head>
+<body>
+
+<header id="header">
+  <button id="ham" aria-label="Menu"><i class="bi bi-list"></i></button>
+  <a class="logo" href="#"><i class="bi bi-person-arms-up"></i><span>VCMIS</span></a>
+  <div class="hsearch"><i class="bi bi-search"></i><input type="text" placeholder="Search PPCodes, members..."></div>
+  <div class="hright">
+    <button class="hbtn"><i class="bi bi-bell"></i><span class="dot"></span></button>
+    <button class="hbtn"><i class="bi bi-chat-left-text"></i></button>
+    <div class="hdiv"></div>
+    <div class="havatar">JA</div>
+  </div>
+</header>
+
+<div id="ov"></div>
+
+<aside id="sidebar">
+  <div class="slbl">Main</div>
+  <a class="sa" href="#"><i class="bi bi-grid"></i><span class="lt">Dashboard</span></a>
+  <a class="sa" href="#"><i class="bi bi-people"></i><span class="lt">Membership</span></a>
+  <div class="slbl">Member Modules</div>
+  <a class="sa" href="#"><i class="bi bi-hand-index-thumb"></i><span class="lt">Prayer Request</span></a>
+  <a class="sa" href="#"><i class="bi bi-megaphone"></i><span class="lt">Announcements</span></a>
+  <a class="sa" href="#"><i class="bi bi-patch-check"></i><span class="lt">Permissions</span></a>
+  <a class="sa" href="#"><i class="bi bi-heart-pulse"></i><span class="lt">Welfare</span></a>
+  <a class="sa" href="#"><i class="bi bi-lightbulb"></i><span class="lt">Suggestions</span></a>
+  <div class="slbl">Management</div>
+  <a class="sa active" href="#pSub" data-bs-toggle="collapse" aria-expanded="true">
+    <i class="bi bi-hand-index-thumb"></i><span class="lt">Prayer Tower</span><i class="bi bi-chevron-down chev"></i>
+  </a>
+  <div class="collapse show subnav" id="pSub">
+    <a class="sa" href="#" onclick="sv('sessions');return false;"><i class="bi bi-calendar3"></i><span class="lt">Sessions</span></a>
+    <a class="sa active" href="#" onclick="sv('builder');return false;"><i class="bi bi-list-check"></i><span class="lt">Prayer List Builder</span></a>
+    <a class="sa" href="#" onclick="sv('live');return false;"><i class="bi bi-play-circle"></i><span class="lt">Live Session</span></a>
+  </div>
+  <a class="sa" href="#aSub" data-bs-toggle="collapse" aria-expanded="false">
+    <i class="bi bi-clipboard2-check"></i><span class="lt">Approval</span>
+    <span class="nb badge bg-danger">12</span><i class="bi bi-chevron-down chev"></i>
+  </a>
+  <div class="collapse subnav" id="aSub">
+    <a class="sa" href="#"><i class="bi bi-hand-index-thumb"></i><span class="lt">Prayer</span><span class="nb badge bg-warning text-dark ms-auto">3</span></a>
+    <a class="sa" href="#"><i class="bi bi-megaphone"></i><span class="lt">Announcements</span><span class="nb badge bg-warning text-dark ms-auto">2</span></a>
+    <a class="sa" href="#"><i class="bi bi-patch-check"></i><span class="lt">Permissions</span><span class="nb badge bg-warning text-dark ms-auto">4</span></a>
+    <a class="sa" href="#"><i class="bi bi-heart-pulse"></i><span class="lt">Welfare</span><span class="nb badge bg-warning text-dark ms-auto">2</span></a>
+    <a class="sa" href="#"><i class="bi bi-lightbulb"></i><span class="lt">Suggestions</span><span class="nb badge bg-warning text-dark ms-auto">1</span></a>
+  </div>
+  <div class="slbl">Admin</div>
+  <a class="sa" href="#"><i class="bi bi-gear"></i><span class="lt">Settings</span></a>
+  <a class="sa" href="#"><i class="bi bi-box-arrow-right"></i><span class="lt">Logout</span></a>
+</aside>
+
+<main id="main">
+  <div class="ptitle mb-3">
+    <h1>Prayer Tower</h1>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item"><a href="#" onclick="sv('sessions');return false;">Prayer Tower</a></li>
+        <li class="breadcrumb-item active" id="bcActive">Prayer List Builder</li>
+      </ol>
+    </nav>
+  </div>
+
+  <section>
+
+    <!-- VIEW: SESSIONS -->
+    <div id="vSessions" style="display:none;">
+      <div class="row"><div class="col-12 col-xl-10">
+        <div class="card"><div class="card-body">
+          <div class="ctitle">
+            <span class="ctl"><i class="bi bi-calendar3 text-primary"></i>Prayer Tower Sessions</span>
+            <button class="btn btn-sm btn-primary" onclick="sv('builder')"><i class="bi bi-plus-circle me-1"></i>New Session</button>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead><tr><th>Session Code</th><th>Date</th><th>Title</th><th>Total</th><th>Groups</th><th>Prayed</th><th>Pending</th><th>Status</th><th>Action</th></tr></thead>
+              <tbody>
+                <tr style="cursor:pointer" onclick="sv('live')">
+                  <td><span style="font-family:monospace;font-size:.78rem;">PS202403060001</span></td>
+                  <td><small>2026-03-06</small></td><td><strong>March Prayer Tower</strong></td>
+                  <td class="text-center"><span class="badge bg-primary">200</span></td>
+                  <td class="text-center">4</td><td class="text-center"><span class="badge bg-success">160</span></td>
+                  <td class="text-center"><span class="badge bg-warning text-dark">40</span></td>
+                  <td class="text-center"><span class="badge bg-warning text-dark">In Progress</span></td>
+                  <td class="text-center"><button class="btn btn-sm btn-primary" onclick="event.stopPropagation();sv('live')"><i class="bi bi-play-circle me-1"></i>Open</button></td>
+                </tr>
+                <tr>
+                  <td><span style="font-family:monospace;font-size:.78rem;">PS202402010001</span></td>
+                  <td><small>2026-02-01</small></td><td>February Prayer Tower</td>
+                  <td class="text-center"><span class="badge bg-primary">145</span></td>
+                  <td class="text-center">5</td><td class="text-center"><span class="badge bg-success">145</span></td>
+                  <td class="text-center"><span class="badge bg-secondary">0</span></td>
+                  <td class="text-center"><span class="badge bg-success">Completed</span></td>
+                  <td class="text-center"><button class="btn btn-sm btn-outline-secondary"><i class="bi bi-eye me-1"></i>View</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div></div>
+      </div></div>
+    </div>
+
+    <!-- VIEW: BUILDER -->
+    <div id="vBuilder">
+      <div class="stage-steps">
+        <div class="stage-step done"><i class="bi bi-calendar-plus"></i>Create Session</div>
+        <div class="stage-step active"><i class="bi bi-list-check"></i>Build Prayer List</div>
+        <div class="stage-step"><i class="bi bi-play-circle"></i>Run Session</div>
+        <div class="stage-step"><i class="bi bi-check2-all"></i>Completed</div>
+      </div>
+
+      <!-- LIVE COUNTER BANNER -->
+      <div class="cbanner">
+        <div class="cbs"><div class="cbn" id="cbSel">0</div><div class="cbl">In List</div></div>
+        <div class="cbd"></div>
+        <div class="cbs"><div class="cbn" id="cbAvail">14</div><div class="cbl">Available</div></div>
+        <div class="cbd"></div>
+        <div class="cbs"><div class="cbn" id="cbGrps">0</div><div class="cbl">Groups</div></div>
+        <div class="cbd"></div>
+        <div class="cbprog">
+          <div class="cbplbl" id="cbLbl">Tick rows in the pool to build the prayer list</div>
+          <div class="progress" style="height:9px;background:rgba(255,255,255,.25);">
+            <div class="progress-bar" id="cbBar" style="width:0%;background:#fff;opacity:.88;"></div>
+          </div>
+          <div class="cbcov" id="cbCov">0 of 14 approved requests added to prayer list</div>
+        </div>
+      </div>
+
+      <div class="row g-3">
+        <!-- LEFT: Session Details -->
+        <div class="col-12 col-lg-4">
+          <div class="card"><div class="card-body">
+            <div class="ctitle"><span class="ctl"><i class="bi bi-calendar3 text-primary"></i>Session Details</span></div>
+            <div class="mb-3">
+              <label class="flabel">Session Code</label>
+              <input class="form-control" type="text" value="PS202403060001" readonly>
+              <div class="hint">Auto-generated.</div>
+            </div>
+            <div class="mb-3">
+              <label class="flabel">Session Date <span class="text-danger">*</span></label>
+              <input class="form-control" type="date" value="2026-03-06" required>
+            </div>
+            <div class="mb-3">
+              <label class="flabel">Session Title <span class="text-danger">*</span></label>
+              <input class="form-control" type="text" value="March Prayer Tower" required>
+            </div>
+            <!-- PRAYER LEADER - PPCode -->
+            <div class="mb-3">
+              <label class="flabel">Prayer Leader PPCode <span class="text-danger">*</span></label>
+              <div class="d-flex gap-2">
+                <input class="form-control" type="text" id="leaderInput" placeholder="e.g. MB20240001" oninput="this.value=this.value.toUpperCase();" required>
+                <button class="btn btn-outline-primary btn-sm px-3" onclick="lookupLeader()" title="Look up PPCode"><i class="bi bi-search"></i></button>
+              </div>
+              <div id="leaderCard" class="leader-card" style="display:none;">
+                <div class="lav" id="lAv">EM</div>
+                <div><div class="lname" id="lName">Elder Mensah</div><div class="lsub" id="lSub">Elder &middot; MB20240001</div></div>
+                <button class="lclr" onclick="clearLeader()">x Clear</button>
+              </div>
+              <div class="hint">Enter the Prayer Leader's PPCode and click search to verify.</div>
+            </div>
+            <div class="mb-3">
+              <label class="flabel">Remarks</label>
+              <textarea class="form-control" rows="2" placeholder="Optional notes..."></textarea>
+            </div>
+            <hr style="border-color:var(--border);margin:14px 0;">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <small class="text-muted">Requests in prayer list:</small>
+              <span class="badge bg-primary" id="sideCount">0</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <small class="text-muted">Groups created:</small>
+              <span class="badge bg-info text-dark" id="sideGrps">0</span>
+            </div>
+            <button class="btn btn-primary w-100" id="btnStart" onclick="sv('live')" disabled>
+              <i class="bi bi-play-circle me-1"></i>Start Session
+            </button>
+            <div class="hint text-center mt-1">Add at least one request to enable.</div>
+          </div></div>
+        </div>
+
+        <!-- RIGHT: Pool + Prayer List -->
+        <div class="col-12 col-lg-8">
+          <!-- Pool -->
+          <div class="card"><div class="card-body">
+            <div class="ctitle">
+              <span class="ctl"><i class="bi bi-database text-primary"></i>Approved Prayer Requests Pool</span>
+              <div class="d-flex gap-2 pool-ctl flex-wrap">
+                <input type="text" class="form-control form-control-sm" placeholder="Search PPCode / topic..." style="width:170px;" id="poolQ" oninput="renderPool()">
+                <button class="btn btn-sm btn-outline-primary" onclick="selectAll()"><i class="bi bi-check2-all me-1"></i>Select All</button>
+                <button class="btn btn-sm btn-outline-secondary" onclick="clearAll()"><i class="bi bi-x-circle me-1"></i>Clear</button>
+              </div>
+            </div>
+            <div class="hint mb-2">
+              <i class="bi bi-info-circle me-1 text-primary"></i>
+              <strong>Tick</strong> a row to instantly add it to the Prayer List.
+              <strong>Untick</strong> to remove it. All changes are live.
+            </div>
+            <div class="pool-scroll">
+              <table class="table table-sm table-hover align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th style="width:34px;"><input type="checkbox" id="chkAll" onchange="masterTick(this)" title="Select/deselect all"></th>
+                    <th>Prayer PPCode</th>
+                    <th>Member PPCode</th>
+                    <th>Prayer Topic</th>
+                    <th>Submitted</th>
+                  </tr>
+                </thead>
+                <tbody id="poolBody"></tbody>
+              </table>
+            </div>
+            <!-- Add to Prayer List bar -->
+            <div class="mt-3 p-3 rounded assign-bar d-flex gap-2 align-items-center flex-wrap" style="background:var(--bg);border:1.5px solid var(--border);">
+              <span style="font-family:'Nunito',sans-serif;font-weight:700;font-size:.83rem;color:var(--p);white-space:nowrap;">
+                <i class="bi bi-tag me-1"></i>Assign selected to group:
+              </span>
+              <select class="form-select form-select-sm" style="max-width:210px;" id="gSel">
+                <option value="">-- choose group --</option>
+              </select>
+              <button class="btn btn-sm btn-primary" onclick="assignGroup()">
+                <i class="bi bi-plus-circle me-1"></i>Add to Prayer List
+              </button>
+              <button class="btn btn-sm btn-outline-secondary ms-auto" onclick="openNGM()">
+                <i class="bi bi-plus me-1"></i>New Group
+              </button>
+            </div>
+          </div></div>
+
+          <!-- PRAYER LIST -->
+          <div class="card"><div class="card-body">
+            <div class="ctitle">
+              <span class="ctl">
+                <i class="bi bi-list-ol text-primary"></i>
+                Prayer List
+                <span class="badge bg-primary" id="plBadge">0</span>
+              </span>
+              <button class="btn btn-sm btn-outline-secondary" id="btnClrList" onclick="clearAll()" style="display:none;">
+                <i class="bi bi-x me-1"></i>Clear All
+              </button>
+            </div>
+            <div class="hint mb-3">
+              Requests appear here automatically when ticked above. Untick or click x to remove instantly.
+              Use "Add to Prayer List" to tag them with a group before starting the session.
+            </div>
+            <div class="pl-wrap" id="plWrap">
+              <div class="pl-empty" id="plEmpty">
+                <i class="bi bi-journal-plus"></i>
+                <p>No requests yet.<br>Tick rows in the pool above to build the list.</p>
+              </div>
+            </div>
+          </div></div>
+
+          <!-- Group Summary -->
+          <div class="card" id="grpSummCard" style="display:none;"><div class="card-body">
+            <div class="ctitle"><span class="ctl"><i class="bi bi-collection text-primary"></i>Groups Summary</span></div>
+            <div id="grpSummBody"></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: LIVE SESSION -->
+    <div id="vLive" style="display:none;">
+      <div class="sess-hd mb-3">
+        <div class="card-body d-flex align-items-center gap-4 flex-wrap">
+          <div>
+            <div style="font-size:.72rem;opacity:.75;text-transform:uppercase;letter-spacing:.07em;">Active Session</div>
+            <div style="font-family:'Nunito',sans-serif;font-size:1.15rem;font-weight:800;margin:2px 0;">March Prayer Tower</div>
+            <div style="font-size:.8rem;opacity:.82;">6 March 2026 &nbsp;&middot;&nbsp; Led by PPCode: <span id="liveLdrPP" style="font-family:monospace;font-weight:700;">MB20240001</span></div>
+          </div>
+          <div class="ms-auto text-end">
+            <div style="font-size:.72rem;opacity:.75;text-transform:uppercase;letter-spacing:.07em;">Overall Progress</div>
+            <div style="font-family:'Nunito',sans-serif;font-size:1.9rem;font-weight:800;line-height:1;letter-spacing:-.04em;" id="ovPct">80%</div>
+            <div class="progress mt-1" style="width:160px;background:rgba(255,255,255,.22);">
+              <div class="progress-bar" id="ovBar" style="width:80%;background:#fff;"></div>
+            </div>
+            <div style="font-size:.73rem;opacity:.8;margin-top:3px;" id="ovLbl">160 of 200 prayed</div>
+          </div>
+        </div>
+      </div>
+      <div class="stage-steps mb-4">
+        <div class="stage-step done"><i class="bi bi-calendar-plus"></i>Session Created</div>
+        <div class="stage-step done"><i class="bi bi-list-check"></i>List Built</div>
+        <div class="stage-step active"><i class="bi bi-play-circle"></i>In Progress</div>
+        <div class="stage-step"><i class="bi bi-check2-all"></i>Completed</div>
+      </div>
+      <div class="row g-3" id="liveGrps">
+        <div class="col-12 col-md-6">
+          <div class="gcard" id="lg1">
+            <div class="gch"><div class="gicon" style="background:#e8f4fd;color:#0d6efd;"><i class="bi bi-briefcase"></i></div>
+            <div class="flex-fill"><p class="gtitle">Job Opportunities</p><p class="gmeta">50 requests - Pending</p></div>
+            <div class="text-end ms-2"><span class="badge bg-secondary d-block mb-1">Pending</span><div class="progress" style="width:76px;"><div class="progress-bar bg-secondary" style="width:0%"></div></div><div style="font-size:.68rem;color:var(--muted);margin-top:2px;">0 / 50</div></div></div>
+            <div class="gbody"><p>Pray collectively for all <strong>50 members</strong> seeking job opportunities.</p>
+            <button class="btn btn-primary btn-sm w-100" onclick="markPrayed('lg1',50)"><i class="bi bi-hand-index-thumb me-1"></i>Mark Group as Prayed</button></div>
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="gcard done" id="lg2">
+            <div class="gch"><div class="gicon" style="background:#d4edda;color:#155724;"><i class="bi bi-airplane"></i></div>
+            <div class="flex-fill"><p class="gtitle">Travel Opportunities</p><p class="gmeta" style="color:var(--success);">10 requests - Prayed</p></div>
+            <div class="text-end ms-2"><span class="badge bg-success d-block mb-1">Prayed</span><div class="progress" style="width:76px;"><div class="progress-bar bg-success" style="width:100%"></div></div><div style="font-size:.68rem;color:var(--muted);margin-top:2px;">10 / 10</div></div></div>
+            <div class="gbody"><p style="color:var(--success);"><i class="bi bi-check-circle me-1"></i>Prayers completed.</p><button class="btn btn-outline-success btn-sm w-100" disabled><i class="bi bi-check2-all me-1"></i>Done</button></div>
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="gcard done" id="lg3">
+            <div class="gch"><div class="gicon" style="background:#d4edda;color:#155724;"><i class="bi bi-hearts"></i></div>
+            <div class="flex-fill"><p class="gtitle">Marriage</p><p class="gmeta" style="color:var(--success);">100 requests - Prayed</p></div>
+            <div class="text-end ms-2"><span class="badge bg-success d-block mb-1">Prayed</span><div class="progress" style="width:76px;"><div class="progress-bar bg-success" style="width:100%"></div></div><div style="font-size:.68rem;color:var(--muted);margin-top:2px;">100 / 100</div></div></div>
+            <div class="gbody"><p style="color:var(--success);"><i class="bi bi-check-circle me-1"></i>Prayers completed.</p><button class="btn btn-outline-success btn-sm w-100" disabled><i class="bi bi-check2-all me-1"></i>Done</button></div>
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="gcard" id="lg4">
+            <div class="gch"><div class="gicon" style="background:#e8f5e9;color:#2e7d32;"><i class="bi bi-mortarboard"></i></div>
+            <div class="flex-fill"><p class="gtitle">Education / Schools</p><p class="gmeta">40 requests - Pending</p></div>
+            <div class="text-end ms-2"><span class="badge bg-secondary d-block mb-1">Pending</span><div class="progress" style="width:76px;"><div class="progress-bar bg-secondary" style="width:0%"></div></div><div style="font-size:.68rem;color:var(--muted);margin-top:2px;">0 / 40</div></div></div>
+            <div class="gbody"><p>Pray collectively for all <strong>40 members</strong> seeking school admission.</p>
+            <button class="btn btn-primary btn-sm w-100" onclick="markPrayed('lg4',40)"><i class="bi bi-hand-index-thumb me-1"></i>Mark Group as Prayed</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="text-center mt-4" id="closeSessDiv" style="display:none;">
+        <button class="btn btn-success btn-lg px-5"><i class="bi bi-check2-all me-2"></i>Close Session - All Groups Prayed</button>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<!-- NEW GROUP MODAL -->
+<div class="modal fade" id="ngModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" style="font-family:'Nunito',sans-serif;font-weight:700;"><i class="bi bi-plus-circle me-2 text-primary"></i>Create New Group</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <label class="flabel">Group Name <span class="text-danger">*</span></label>
+        <input type="text" class="form-control mb-3" id="ngName" placeholder="e.g. Healing, Finances...">
+        <label class="flabel">Icon</label>
+        <select class="form-select mb-3" id="ngIcon">
+          <option value="bi-patch-question">General</option>
+          <option value="bi-briefcase">Job / Career</option>
+          <option value="bi-hearts">Marriage / Relationship</option>
+          <option value="bi-mortarboard">Education</option>
+          <option value="bi-airplane">Travel</option>
+          <option value="bi-activity">Healing / Health</option>
+          <option value="bi-cash-coin">Finances</option>
+          <option value="bi-house">Housing</option>
+          <option value="bi-people">Family</option>
+          <option value="bi-globe">Nation / Country</option>
+        </select>
+        <label class="flabel">Description</label>
+        <textarea class="form-control" id="ngDesc" rows="2" placeholder="Brief description..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="createGroup()"><i class="bi bi-plus me-1"></i>Add Group</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LEADER MODAL -->
+<div class="modal fade" id="ldrModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" style="font-family:'Nunito',sans-serif;font-weight:700;"><i class="bi bi-person-badge me-2 text-primary"></i>PPCode Lookup</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="ldrBody"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="btnConfLdr" disabled><i class="bi bi-check me-1"></i>Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-el" id="toastEl"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+'use strict';
+var POOL=[
+  {pp:'PR202402100001',mPP:'MB20240012',member:'Kwame A.',  topic:'Job Opportunity',    date:'2026-02-10'},
+  {pp:'PR202402110002',mPP:'MB20240034',member:'Ama B.',    topic:'Job Opportunity',    date:'2026-02-11'},
+  {pp:'PR202402120003',mPP:'MB20240056',member:'Kofi M.',   topic:'Marriage',           date:'2026-02-12'},
+  {pp:'PR202402130004',mPP:'MB20240078',member:'Esi D.',    topic:'Marriage',           date:'2026-02-13'},
+  {pp:'PR202402140005',mPP:'MB20240090',member:'Abena K.',  topic:'Travel Opportunity', date:'2026-02-14'},
+  {pp:'PR202402150006',mPP:'MB20240101',member:'Yaw O.',    topic:'School Admission',   date:'2026-02-15'},
+  {pp:'PR202402160007',mPP:'MB20240113',member:'Akosua F.', topic:'Healing',            date:'2026-02-16'},
+  {pp:'PR202402170008',mPP:'MB20240125',member:'Nana T.',   topic:'Job Opportunity',    date:'2026-02-17'},
+  {pp:'PR202402180009',mPP:'MB20240137',member:'Fiifi S.',  topic:'Marriage',           date:'2026-02-18'},
+  {pp:'PR202402190010',mPP:'MB20240149',member:'Adwoa P.',  topic:'School Admission',   date:'2026-02-19'},
+  {pp:'PR202402200011',mPP:'MB20240161',member:'Kwesi B.',  topic:'Healing',            date:'2026-02-20'},
+  {pp:'PR202402210012',mPP:'MB20240173',member:'Afia O.',   topic:'Finances',           date:'2026-02-21'},
+  {pp:'PR202402220013',mPP:'MB20240185',member:'Yao K.',    topic:'Job Opportunity',    date:'2026-02-22'},
+  {pp:'PR202402230014',mPP:'MB20240197',member:'Mansa D.',  topic:'Marriage',           date:'2026-02-23'},
+];
+var MEMBERS={'MB20240001':{name:'Elder Mensah',role:'Elder',ini:'EM'},'MB20240002':{name:'Pastor Amo',role:'Pastor',ini:'PA'},'MB20240003':{name:'Deacon Boateng',role:'Deacon',ini:'DB'},'MB20240004':{name:'Sis. Akua',role:'Member',ini:'SA'}};
+var prayerList=[],groups=[],leaderPP='',leaderData=null,prayedLive=160,totalLive=200,doneLiveGrps=2;
+var $ngM,$lM;
+document.addEventListener('DOMContentLoaded',function(){
+  $ngM=new bootstrap.Modal(document.getElementById('ngModal'));
+  $lM=new bootstrap.Modal(document.getElementById('ldrModal'));
+  var ham=document.getElementById('ham'),sb=document.getElementById('sidebar'),ov=document.getElementById('ov');
+  function closeSB(){sb.classList.remove('open');ov.classList.remove('show');document.body.style.overflow='';}
+  ham.addEventListener('click',function(){var o=sb.classList.toggle('open');ov.classList.toggle('show',o);document.body.style.overflow=o?'hidden':'';});
+  ov.addEventListener('click',closeSB);
+  window.addEventListener('resize',function(){if(window.innerWidth>=992)closeSB();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeSB();});
+  groups=[
+    {name:'Job Opportunities',icon:'bi-briefcase',desc:'',items:[]},
+    {name:'Travel Opportunities',icon:'bi-airplane',desc:'',items:[]},
+    {name:'Marriage',icon:'bi-hearts',desc:'',items:[]},
+    {name:'Education / Schools',icon:'bi-mortarboard',desc:'',items:[]},
+  ];
+  renderPool();renderGroupSel();refreshCounts();
+});
+function sv(v){
+  ['vSessions','vBuilder','vLive'].forEach(function(id){document.getElementById(id).style.display='none';});
+  var m={sessions:'Sessions',builder:'Prayer List Builder',live:'Live Session'};
+  document.getElementById('bcActive').textContent=m[v]||v;
+  document.getElementById('v'+v.charAt(0).toUpperCase()+v.slice(1)).style.display='block';
+  if(v==='live'&&leaderPP)document.getElementById('liveLdrPP').textContent=leaderPP;
+}
+function renderPool(){
+  var q=(document.getElementById('poolQ').value||'').toLowerCase();
+  var body=document.getElementById('poolBody'),html='',shown=0;
+  POOL.forEach(function(r){
+    if(q&&!r.pp.toLowerCase().includes(q)&&!r.topic.toLowerCase().includes(q)&&!r.mPP.toLowerCase().includes(q)&&!r.member.toLowerCase().includes(q))return;
+    shown++;
+    var chk=prayerList.includes(r.pp);
+    html+='<tr class="pool-row'+(chk?' sel':'')+'" id="pr-'+r.pp+'">'
+      +'<td style="text-align:center;"><input type="checkbox" class="pchk" data-pp="'+r.pp+'"'+(chk?' checked':'')
+      +' onchange="onChk(this)"></td>'
+      +'<td><span style="font-family:monospace;font-size:.77rem;">'+r.pp+'</span></td>'
+      +'<td><span style="font-family:monospace;font-size:.77rem;font-weight:600;">'+r.mPP+'</span>'
+      +'<br><span style="font-size:.73rem;color:var(--muted);">'+r.member+'</span></td>'
+      +'<td style="font-weight:600;">'+r.topic+'</td>'
+      +'<td><small>'+r.date+'</small></td>'
+      +'</tr>';
+  });
+  if(!shown)html='<tr><td colspan="5" class="text-center py-3" style="color:var(--muted);"><i class="bi bi-search me-1"></i>No results.</td></tr>';
+  body.innerHTML=html;
+  syncMaster();
+}
+function onChk(chk){
+  var pp=chk.dataset.pp,row=document.getElementById('pr-'+pp);
+  if(chk.checked){if(!prayerList.includes(pp))prayerList.push(pp);if(row)row.classList.add('sel');}
+  else{prayerList=prayerList.filter(function(x){return x!==pp;});groups.forEach(function(g){g.items=g.items.filter(function(x){return x!==pp;});});if(row)row.classList.remove('sel');}
+  renderPL();renderGroupSel();renderGS();refreshCounts();syncMaster();
+}
+function masterTick(m){POOL.forEach(function(r){var c=document.querySelector('.pchk[data-pp="'+r.pp+'"]');if(c){c.checked=m.checked;onChk(c);}});}
+function selectAll(){POOL.forEach(function(r){if(!prayerList.includes(r.pp)){prayerList.push(r.pp);var row=document.getElementById('pr-'+r.pp);if(row)row.classList.add('sel');var c=document.querySelector('.pchk[data-pp="'+r.pp+'"]');if(c)c.checked=true;}});renderPL();renderGroupSel();refreshCounts();syncMaster();}
+function clearAll(){if(prayerList.length&&!confirm('Remove all '+prayerList.length+' requests from the prayer list?'))return;prayerList=[];groups.forEach(function(g){g.items=[];});renderPool();renderPL();renderGroupSel();renderGS();refreshCounts();}
+function syncMaster(){var all=document.querySelectorAll('.pchk'),chk=document.querySelectorAll('.pchk:checked'),m=document.getElementById('chkAll');if(!m||!all.length)return;m.indeterminate=chk.length>0&&chk.length<all.length;m.checked=all.length>0&&chk.length===all.length;}
+function renderPL(){
+  var wrap=document.getElementById('plWrap'),badge=document.getElementById('plBadge'),clrBtn=document.getElementById('btnClrList');
+  badge.textContent=prayerList.length;
+  if(!prayerList.length){
+    var empty=document.getElementById('plEmpty');
+    if(!empty){empty=document.createElement('div');empty.id='plEmpty';empty.className='pl-empty';empty.innerHTML='<i class="bi bi-journal-plus"></i><p>No requests yet.<br>Tick rows in the pool above to build the list.</p>';}
+    wrap.innerHTML='';wrap.appendChild(empty);clrBtn.style.display='none';return;
+  }
+  clrBtn.style.display='';
+  var html='';
+  prayerList.forEach(function(pp,i){
+    var r=POOL.find(function(x){return x.pp===pp;});if(!r)return;
+    var gn='';groups.forEach(function(g){if(g.items.includes(pp))gn=g.name;});
+    html+='<div class="pl-item" id="pli-'+pp+'">'
+      +'<div class="pl-num">'+(i+1)+'</div>'
+      +'<span class="pl-code">'+pp+'</span>'
+      +'<div class="flex-fill"><div class="pl-topic">'+r.topic+'</div>'
+      +'<div style="font-size:.73rem;color:var(--muted);">'+r.mPP+' - '+r.member
+      +(gn?' <span class="badge" style="background:#e8f0fe;color:#4154f1;font-size:.64rem;">'+gn+'</span>':'')
+      +'</div></div>'
+      +'<button class="pl-remove" onclick="removePL(''+pp+'')" title="Remove"><i class="bi bi-x-lg"></i></button>'
+      +'</div>';
+  });
+  wrap.innerHTML=html;
+}
+function removePL(pp){var c=document.querySelector('.pchk[data-pp="'+pp+'"]');if(c){c.checked=false;onChk(c);return;}prayerList=prayerList.filter(function(x){return x!==pp;});groups.forEach(function(g){g.items=g.items.filter(function(x){return x!==pp;});});renderPL();renderGS();refreshCounts();}
+function refreshCounts(){
+  var t=POOL.length,s=prayerList.length,p=t>0?Math.round(s/t*100):0;
+  document.getElementById('cbSel').textContent=s;
+  document.getElementById('cbAvail').textContent=t;
+  document.getElementById('cbGrps').textContent=groups.length;
+  document.getElementById('cbBar').style.width=p+'%';
+  document.getElementById('cbLbl').textContent=s>0?s+' request'+(s>1?'s':'')+' currently in the prayer list':'Tick rows in the pool to build the prayer list';
+  document.getElementById('cbCov').textContent=s+' of '+t+' approved requests added to prayer list';
+  document.getElementById('sideCount').textContent=s;
+  document.getElementById('sideGrps').textContent=groups.length;
+  document.getElementById('btnStart').disabled=s===0;
+}
+function renderGroupSel(){var sel=document.getElementById('gSel'),prev=sel.value;sel.innerHTML='<option value="">-- choose group --</option>';groups.forEach(function(g,i){var o=document.createElement('option');o.value=i;o.textContent=g.name+(g.items.length?' ('+g.items.length+')':'');sel.appendChild(o);});sel.value=prev;}
+function assignGroup(){var idx=document.getElementById('gSel').value;if(idx===''){toast('Please choose a group first.');return;}var added=prayerList.filter(function(pp){return !groups[idx].items.includes(pp);});if(!added.length){toast('All selected requests are already in this group.');return;}groups[idx].items=groups[idx].items.concat(added);renderGroupSel();renderGS();renderPL();toast(added.length+' request(s) added to "'+groups[idx].name+'"');}
+function openNGM(){$ngM.show();}
+function createGroup(){var n=document.getElementById('ngName').value.trim();if(!n){toast('Group name is required.');return;}groups.push({name:n,icon:document.getElementById('ngIcon').value,desc:document.getElementById('ngDesc').value.trim(),items:[]});document.getElementById('ngName').value='';document.getElementById('ngDesc').value='';$ngM.hide();renderGroupSel();renderGS();refreshCounts();toast('Group "'+n+'" created!');}
+function renderGS(){
+  var card=document.getElementById('grpSummCard'),body=document.getElementById('grpSummBody');
+  var has=groups.some(function(g){return g.items.length>0;});
+  if(!has){card.style.display='none';return;}
+  card.style.display='block';
+  var html='';
+  groups.forEach(function(g,i){
+    if(!g.items.length)return;
+    html+='<div class="gcard mb-2"><div class="gch" onclick="tgGS('+i+')">'
+      +'<div class="gicon" style="background:var(--p-lt);color:var(--p);"><i class="bi '+g.icon+'"></i></div>'
+      +'<div class="flex-fill"><p class="gtitle">'+g.name+'</p><p class="gmeta">'+g.items.length+' request(s)</p></div>'
+      +'<i class="bi bi-chevron-down" id="gsc-'+i+'" style="transition:transform .2s;"></i>'
+      +'</div><div class="collapse show" id="gsb-'+i+'">';
+    g.items.forEach(function(pp){var r=POOL.find(function(x){return x.pp===pp;});if(!r)return;html+='<div style="display:flex;align-items:center;gap:10px;padding:8px 16px;border-bottom:1px solid #f0f3ff;font-size:.8rem;"><span style="font-family:monospace;font-size:.73rem;color:var(--muted);min-width:138px;">'+pp+'</span><span style="font-weight:600;flex:1;">'+r.topic+'</span><span style="font-size:.74rem;color:var(--muted);">'+r.mPP+'</span></div>';});
+    html+='</div></div>';
+  });
+  body.innerHTML=html;
+}
+function tgGS(i){var b=document.getElementById('gsb-'+i),c=document.getElementById('gsc-'+i);b.classList.toggle('show');c.style.transform=b.classList.contains('show')?'':'rotate(-90deg)';}
+function lookupLeader(){
+  var pp=(document.getElementById('leaderInput').value||'').trim().toUpperCase();
+  if(!pp){toast('Enter a PPCode first.');return;}
+  var m=MEMBERS[pp]||null,body=document.getElementById('ldrBody'),cfm=document.getElementById('btnConfLdr');
+  if(!m){body.innerHTML='<div class="text-center py-3"><i class="bi bi-person-x" style="font-size:2rem;color:var(--danger);"></i><p class="mt-2 mb-0" style="color:var(--danger);font-weight:700;">PPCode not found</p><p class="mt-1" style="font-size:.82rem;color:var(--muted);">No member matched <code>'+pp+'</code></p></div>';cfm.disabled=true;}
+  else{body.innerHTML='<div class="leader-card mb-2"><div class="lav">'+m.ini+'</div><div><div class="lname">'+m.name+'</div><div class="lsub">'+m.role+' - '+pp+'</div></div></div><p class="mb-0" style="font-size:.8rem;color:var(--muted);">Confirm as Prayer Leader?</p>';cfm.disabled=false;cfm.onclick=function(){leaderPP=pp;leaderData=m;document.getElementById('lAv').textContent=m.ini;document.getElementById('lName').textContent=m.name;document.getElementById('lSub').textContent=m.role+' - '+pp;document.getElementById('leaderCard').style.display='flex';$lM.hide();toast('Leader set: '+m.name+' ('+pp+')');};}
+  $lM.show();
+}
+function clearLeader(){leaderPP='';leaderData=null;document.getElementById('leaderInput').value='';document.getElementById('leaderCard').style.display='none';}
+function markPrayed(id,count){
+  if(!confirm('Mark all '+count+' requests in this group as Prayed?'))return;
+  var card=document.getElementById(id),badge=card.querySelector('.badge'),bar=card.querySelector('.progress-bar'),meta=card.querySelector('.gmeta'),note=card.querySelector('.gbody p'),ctEl=card.querySelector('[style*="0.68rem"]'),btn=card.querySelector('button:not([disabled])');
+  card.classList.add('done');card.querySelector('.gch').style.background='var(--success-lt)';card.querySelector('.gch').style.borderColor='#b7e4c7';card.querySelector('.gtitle').style.color='var(--success)';
+  if(meta){meta.textContent=count+' requests - Prayed';meta.style.color='var(--success)';}
+  badge.className='badge bg-success d-block mb-1';badge.textContent='Prayed';
+  bar.style.width='100%';bar.className='progress-bar bg-success';
+  if(ctEl)ctEl.textContent=count+' / '+count;
+  if(note){note.innerHTML='<i class="bi bi-check-circle me-1"></i>Prayers completed for this group.';note.style.color='var(--success)';}
+  if(btn){btn.disabled=true;btn.innerHTML='<i class="bi bi-check2-all me-1"></i>Done';btn.className='btn btn-outline-success btn-sm w-100';}
+  prayedLive+=count;doneLiveGrps++;
+  var pct=Math.min(100,Math.round(prayedLive/totalLive*100));
+  document.getElementById('ovPct').textContent=pct+'%';document.getElementById('ovBar').style.width=pct+'%';document.getElementById('ovLbl').textContent=prayedLive+' of '+totalLive+' prayed';
+  if(!document.querySelectorAll('#liveGrps .gcard:not(.done)').length)document.getElementById('closeSessDiv').style.display='block';
+}
+var _tt;
+function toast(msg){var el=document.getElementById('toastEl');el.textContent=msg;el.classList.add('show');clearTimeout(_tt);_tt=setTimeout(function(){el.classList.remove('show');},2800);}
+</script>
+</body>
+</html>
