@@ -3,395 +3,937 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#4154f1">
 <title>Prayer Tower - VCMIS</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 <style>
-/* ── TOKENS ─────────────────────────────────── */
-:root{
-  --p:#4154f1; --p-dk:#2c3fd4; --p-lt:#eef0fd; --p-glow:rgba(65,84,241,.13);
-  --success:#198754; --success-lt:#f0fff4; --danger:#dc3545;
-  --bg:#f6f9ff; --surf:#fff; --border:#e0e6f0;
-  --text:#333; --muted:#6c757d; --navy:#012970;
-  --r:8px; --rsm:5px;
-  --shadow:0 0 24px rgba(1,41,112,.08);
-  --shadow-md:0 4px 20px rgba(1,41,112,.13);
-  --sw:240px; --hh:60px;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
-body{font-family:'Open Sans',sans-serif;background:var(--bg);color:var(--text);font-size:.9rem;min-height:100dvh;overflow-x:hidden;-webkit-text-size-adjust:100%;}
-::-webkit-scrollbar{width:5px;height:5px;}
-::-webkit-scrollbar-thumb{background:#cdd5e0;border-radius:4px;}
+/* ═══════════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════════ */
+:root {
+  /* Brand */
+  --p: #4154f1;
+  --p-dk: #2c3fd4;
+  --p-lt: #eef0fd;
+  --p-glow: rgba(65,84,241,.13);
+  --p-glow2: rgba(65,84,241,.08);
 
-/* ── HEADER ─────────────────────────────────── */
-#header{position:fixed;top:0;left:0;right:0;height:var(--hh);background:var(--surf);box-shadow:0 2px 20px rgba(1,41,112,.1);display:flex;align-items:center;padding:0 16px;z-index:1040;gap:8px;}
-.logo{display:flex;align-items:center;gap:7px;font-family:'Nunito',sans-serif;font-size:1.1rem;font-weight:800;color:var(--p);text-decoration:none;white-space:nowrap;flex-shrink:0;}
-.logo span{color:var(--navy);}
-#ham{display:none;background:none;border:none;padding:5px 7px;border-radius:5px;font-size:1.25rem;color:var(--navy);cursor:pointer;line-height:1;flex-shrink:0;}
-.hsearch{flex:1;max-width:280px;margin:0 8px;position:relative;}
-.hsearch input{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:20px;padding:6px 14px 6px 32px;font-size:.82rem;color:var(--text);outline:none;transition:border .2s;}
-.hsearch input:focus{border-color:var(--p);box-shadow:0 0 0 3px var(--p-glow);}
-.hsearch i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.85rem;pointer-events:none;}
-.hright{margin-left:auto;display:flex;align-items:center;gap:4px;flex-shrink:0;}
-.hbtn{width:36px;height:36px;border:none;background:none;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--navy);font-size:1rem;cursor:pointer;position:relative;}
-.hbtn:hover{background:var(--p-lt);}
-.hbtn .dot{position:absolute;top:7px;right:7px;width:7px;height:7px;background:var(--danger);border-radius:50%;border:2px solid #fff;}
-.hdiv{width:1px;height:26px;background:var(--border);margin:0 4px;}
-.havatar{width:34px;height:34px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:700;font-size:.82rem;flex-shrink:0;box-shadow:0 0 0 2px #fff,0 0 0 4px rgba(65,84,241,.2);}
+  /* Semantic */
+  --success: #16a34a;
+  --success-lt: #f0fdf4;
+  --success-bd: #bbf7d0;
+  --danger: #dc2626;
+  --warning: #d97706;
+  --info: #0284c7;
 
-/* ── OVERLAY ────────────────────────────────── */
-#ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1029;backdrop-filter:blur(2px);opacity:0;transition:opacity .28s;}
-#ov.show{opacity:1;}
+  /* Surfaces */
+  --bg: #f4f7fe;
+  --surf: #ffffff;
+  --surf2: #f8faff;
+  --border: #e0e8f5;
+  --border2: #edf1fb;
 
-/* ── SIDEBAR ────────────────────────────────── */
-#sidebar{position:fixed;top:var(--hh);left:0;width:var(--sw);height:calc(100dvh - var(--hh));background:var(--surf);box-shadow:var(--shadow);overflow-y:auto;overflow-x:hidden;z-index:1030;padding:10px 0 40px;transition:transform .28s cubic-bezier(.4,0,.2,1);}
-.slbl{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#899bbd;padding:14px 18px 5px;}
-.sa{display:flex;align-items:center;gap:8px;padding:9px 18px;color:var(--navy);text-decoration:none;font-size:.875rem;font-weight:600;border-left:3px solid transparent;transition:all .14s;white-space:nowrap;-webkit-tap-highlight-color:transparent;}
-.sa:hover{background:var(--bg);color:var(--p);}
-.sa.active{background:var(--p-lt);color:var(--p);border-left-color:var(--p);}
-.sa i{font-size:1rem;min-width:18px;flex-shrink:0;}
-.sa .lt{flex:1;}
-.sa .chev{font-size:.72rem;transition:transform .2s;margin-left:auto;}
-.sa[aria-expanded="true"] .chev{transform:rotate(180deg);}
-.sa .nb{font-size:.63rem;font-weight:700;padding:.2em .45em;flex-shrink:0;}
-.subnav{background:#fbfcff;}
-.subnav .sa{padding-left:38px;font-weight:400;font-size:.845rem;}
-.subnav .sa.active{font-weight:700;}
+  /* Text */
+  --text: #1e293b;
+  --muted: #64748b;
+  --navy: #0f2460;
 
-/* ── MAIN ───────────────────────────────────── */
-#main{margin-left:var(--sw);margin-top:var(--hh);padding:20px 24px 56px;min-height:calc(100dvh - var(--hh));transition:margin-left .28s cubic-bezier(.4,0,.2,1);}
+  /* Radius */
+  --r: 10px;
+  --r-sm: 6px;
+  --r-lg: 16px;
+  --r-xl: 20px;
 
-/* ── PAGE TITLE ─────────────────────────────── */
-.ptitle{margin-bottom:16px;}
-.ptitle h1{font-family:'Nunito',sans-serif;font-size:1.35rem;font-weight:800;color:var(--navy);margin-bottom:2px;}
-.breadcrumb{font-size:.78rem;margin:0;}
-.breadcrumb-item+.breadcrumb-item::before{color:var(--muted);}
-.breadcrumb-item a{color:var(--p);text-decoration:none;}
-.breadcrumb-item.active{color:var(--muted);}
+  /* Shadow */
+  --shadow-xs: 0 1px 4px rgba(15,36,96,.07);
+  --shadow-sm: 0 2px 10px rgba(15,36,96,.08);
+  --shadow: 0 4px 24px rgba(15,36,96,.09);
+  --shadow-md: 0 6px 32px rgba(15,36,96,.13);
+  --shadow-lg: 0 10px 48px rgba(15,36,96,.16);
 
-/* ── CARDS ──────────────────────────────────── */
-.card{border:none;border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:18px;background:var(--surf);}
-.card-body{padding:18px 20px;}
-.ctitle{font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:700;color:var(--navy);padding:4px 0 12px;margin-bottom:12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
-.ctl{display:flex;align-items:center;gap:7px;flex:1;flex-wrap:wrap;}
+  /* Layout */
+  --sw: 248px;
+  --hh: 62px;
 
-/* ── FORMS ──────────────────────────────────── */
-.flabel{font-weight:600;font-size:.84rem;color:var(--navy);display:block;margin-bottom:4px;}
-.form-control,.form-select{border-radius:var(--rsm);border:1.5px solid #cfd5e3;font-size:1rem;font-family:'Open Sans',sans-serif;padding:8px 12px;color:var(--text);width:100%;outline:none;transition:border .2s;}
-.form-control:focus,.form-select:focus{border-color:var(--p);box-shadow:0 0 0 3px var(--p-glow);}
-.form-control[readonly]{background:#f8f9fa;color:var(--muted);}
-textarea.form-control{resize:vertical;min-height:68px;}
-.hint{font-size:.78rem;color:var(--muted);margin-top:4px;line-height:1.4;}
+  /* Typography scale */
+  --fs-xs: clamp(.65rem, 1.3vw, .72rem);
+  --fs-sm: clamp(.75rem, 1.5vw, .82rem);
+  --fs-base: clamp(.82rem, 1.6vw, .9rem);
+  --fs-md: clamp(.88rem, 1.8vw, .95rem);
+  --fs-lg: clamp(.95rem, 2vw, 1.05rem);
+  --fs-xl: clamp(1rem, 2.2vw, 1.15rem);
+  --fs-2xl: clamp(1.1rem, 2.4vw, 1.35rem);
+  --fs-3xl: clamp(1.2rem, 2.8vw, 1.6rem);
+  --fs-4xl: clamp(1.4rem, 3.5vw, 2rem);
 
-/* ── BUTTONS ────────────────────────────────── */
-.btn{font-family:'Open Sans',sans-serif;font-weight:600;border-radius:var(--rsm);transition:all .15s;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
-.btn-primary{background:var(--p);border-color:var(--p);}
-.btn-primary:hover{background:var(--p-dk);border-color:var(--p-dk);}
-.btn-secondary{background:#f1f5f9;border-color:#e2e8f0;color:#475569;}
-.btn-outline-primary{border-color:var(--p);color:var(--p);}
-.btn-outline-primary:hover{background:var(--p-lt);}
-.btn-outline-secondary{border-color:var(--border);color:var(--muted);}
-.btn-outline-secondary:hover{background:var(--bg);color:var(--text);}
-.btn-outline-success{border-color:var(--success);color:var(--success);}
-
-/* ── TABLES ─────────────────────────────────── */
-.table{font-size:.81rem;width:100%;border-collapse:collapse;}
-.table thead th{font-size:.72rem;font-weight:700;color:var(--navy);background:var(--bg);padding:9px 11px;white-space:nowrap;border-bottom:2px solid var(--border);vertical-align:middle;text-transform:uppercase;letter-spacing:.04em;}
-.table tbody td{padding:9px 11px;border-bottom:1px solid #f0f3ff;vertical-align:middle;}
-.table tbody tr:last-child td{border-bottom:none;}
-.table-hover tbody tr:hover td{background:#f5f7ff;}
-.table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--rsm);}
-
-/* ── BADGES / PROGRESS ──────────────────────── */
-.badge{font-size:.7rem;font-weight:700;padding:.3em .58em;border-radius:12px;}
-.progress{height:7px;border-radius:99px;background:#e9ecef;overflow:hidden;}
-.progress-bar{border-radius:99px;transition:width .4s ease;}
-
-/* ── STAGE STEPS ────────────────────────────── */
-.stage-steps{display:flex;margin-bottom:18px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
-.stage-steps::-webkit-scrollbar{display:none;}
-.stage-step{flex:1;min-width:68px;text-align:center;padding:10px 4px;font-family:'Nunito',sans-serif;font-size:.68rem;font-weight:700;border-top:3px solid var(--border);color:#aaa;text-transform:uppercase;letter-spacing:.04em;line-height:1.3;}
-.stage-step i{display:block;font-size:1rem;margin-bottom:4px;}
-.stage-step.done{border-top-color:var(--success);color:var(--success);}
-.stage-step.active{border-top-color:var(--p);color:var(--p);}
-
-/* ── COUNTER BANNER ─────────────────────────── */
-.cbanner{background:linear-gradient(135deg,#4154f1 0%,#6370f5 100%);color:#fff;border-radius:var(--r);padding:14px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;box-shadow:var(--shadow-md);}
-.cbs{display:flex;flex-direction:column;align-items:center;min-width:52px;}
-.cbn{font-family:'Nunito',sans-serif;font-size:1.75rem;font-weight:800;line-height:1;letter-spacing:-.04em;}
-.cbl{font-size:.62rem;opacity:.78;text-transform:uppercase;letter-spacing:.07em;margin-top:1px;}
-.cbd{width:1px;height:34px;background:rgba(255,255,255,.22);flex-shrink:0;}
-.cbprog{flex:1;min-width:120px;}
-.cbplbl{font-size:.72rem;opacity:.88;margin-bottom:5px;line-height:1.3;}
-.cbcov{font-size:.67rem;opacity:.72;margin-top:4px;}
-
-/* ── POOL TABLE ─────────────────────────────── */
-.pool-scroll{max-height:290px;overflow-y:auto;border:1px solid var(--border);border-radius:var(--rsm);-webkit-overflow-scrolling:touch;}
-.pool-scroll thead th{position:sticky;top:0;z-index:2;background:var(--bg)!important;}
-tr.pool-row{transition:background .1s;}
-tr.pool-row.sel td{background:#eef0fd!important;}
-tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
-
-/* ── POOL CONTROLS ──────────────────────────── */
-.pool-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.pool-controls .pool-search{flex:1;min-width:130px;}
-.pool-buttons{display:flex;gap:6px;flex-shrink:0;}
-
-/* ── ASSIGN BAR ─────────────────────────────── */
-.assign-bar{margin-top:14px;padding:12px 14px;border-radius:var(--rsm);background:var(--bg);border:1.5px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.assign-lbl{font-family:'Nunito',sans-serif;font-weight:700;font-size:.82rem;color:var(--p);white-space:nowrap;flex-shrink:0;}
-.assign-bar select{flex:1;min-width:130px;}
-.assign-bar .btn{white-space:nowrap;}
-
-/* ── PRAYER LIST ────────────────────────────── */
-.pl-wrap{border:1px solid var(--border);border-radius:var(--rsm);overflow:hidden;min-height:80px;}
-.pl-item{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border-bottom:1px solid #f0f3ff;animation:fadeUp .18s ease;}
-.pl-item:last-child{border-bottom:none;}
-.pl-item:hover{background:var(--bg);}
-@keyframes fadeUp{from{opacity:0;transform:translateY(-5px);}to{opacity:1;transform:translateY(0);}}
-.pl-num{width:22px;height:22px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:800;flex-shrink:0;margin-top:1px;}
-.pl-body{flex:1;min-width:0;}
-.pl-topic{font-weight:600;font-size:.83rem;word-break:break-word;}
-.pl-meta{font-size:.72rem;color:var(--muted);margin-top:2px;word-break:break-word;}
-.pl-remove{background:none;border:none;color:#ccc;cursor:pointer;font-size:.9rem;padding:2px 5px;border-radius:4px;flex-shrink:0;line-height:1;transition:color .12s,background .12s;margin-top:1px;}
-.pl-remove:hover{color:var(--danger);background:#fff0f0;}
-.pl-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:30px 16px;color:var(--muted);text-align:center;}
-.pl-empty i{font-size:1.9rem;opacity:.3;}
-.pl-empty p{font-size:.82rem;margin:0;line-height:1.5;}
-
-/* ── GROUP CARDS ────────────────────────────── */
-.gcard{border:1px solid var(--border);border-radius:var(--r);background:var(--surf);margin-bottom:14px;overflow:hidden;box-shadow:0 2px 10px rgba(1,41,112,.06);transition:box-shadow .2s;}
-.gcard:hover{box-shadow:var(--shadow-md);}
-.gcard.done{border-color:#b7e4c7;}
-.gch{display:flex;align-items:center;gap:10px;padding:12px 15px;background:var(--bg);border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
-.gch:hover{background:#eef1fc;}
-.gcard.done .gch{background:var(--success-lt);border-color:#b7e4c7;}
-.gicon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;}
-.gtitle{font-family:'Nunito',sans-serif;font-weight:700;font-size:.87rem;color:var(--navy);margin:0;}
-.gmeta{font-size:.74rem;color:var(--muted);margin:0;}
-.gcard.done .gtitle{color:var(--success);}
-.gbody{padding:12px 15px 14px;}
-.gbody p{font-size:.8rem;color:var(--muted);margin-bottom:10px;line-height:1.5;}
-.gch-right{text-align:right;flex-shrink:0;min-width:80px;}
-.gch-right .progress{width:76px;display:inline-block;}
-.gch-right .pct-txt{font-size:.67rem;color:var(--muted);margin-top:2px;}
-
-/* ── SESSION HEADER ─────────────────────────── */
-.sess-hd{background:linear-gradient(135deg,#4154f1 0%,#6370f5 100%);color:#fff;border-radius:var(--r);box-shadow:var(--shadow-md);margin-bottom:18px;overflow:hidden;position:relative;}
-.sess-hd::after{content:'';position:absolute;top:-20px;right:-20px;width:120px;height:120px;background:rgba(255,255,255,.06);border-radius:50%;}
-.sess-inner{padding:16px 20px;position:relative;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
-.sess-info{flex:1;min-width:160px;}
-.sess-sub-lbl{font-size:.7rem;opacity:.75;text-transform:uppercase;letter-spacing:.07em;}
-.sess-title{font-family:'Nunito',sans-serif;font-size:1.1rem;font-weight:800;margin:3px 0;}
-.sess-sub{font-size:.78rem;opacity:.82;}
-.sess-prog{flex-shrink:0;}
-.sess-pct{font-family:'Nunito',sans-serif;font-size:1.8rem;font-weight:800;line-height:1;letter-spacing:-.04em;}
-.sess-bar-wrap{background:rgba(255,255,255,.22);height:8px;border-radius:99px;overflow:hidden;margin-top:5px;min-width:140px;}
-.sess-bar-inner{height:100%;background:#fff;border-radius:99px;transition:width .4s;}
-.sess-lbl{font-size:.7rem;opacity:.8;margin-top:3px;}
-
-/* ── LEADER CARD ────────────────────────────── */
-.leader-card{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--rsm);border:1px solid #bae6fd;background:#f0f9ff;margin-top:8px;flex-wrap:wrap;}
-.lav{width:36px;height:36px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:800;font-size:.82rem;flex-shrink:0;}
-.lname{font-family:'Nunito',sans-serif;font-weight:700;font-size:.87rem;color:var(--navy);}
-.lsub{font-size:.72rem;color:var(--muted);}
-.lclr{margin-left:auto;background:none;border:1px solid #bae6fd;border-radius:4px;color:#0369a1;font-size:.75rem;padding:3px 9px;cursor:pointer;white-space:nowrap;}
-.lclr:hover{background:#e0f2fe;}
-
-/* ── TOAST ──────────────────────────────────── */
-.toast-el{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--navy);color:#fff;padding:9px 20px;border-radius:20px;font-size:.83rem;font-weight:600;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.2);opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap;max-width:calc(100vw - 32px);text-align:center;}
-.toast-el.show{opacity:1;transform:translateX(-50%) translateY(0);}
-
-/* ════════════════════════════════════════════════
-   RESPONSIVE — COMPLETE MOBILE-FIRST SYSTEM
-════════════════════════════════════════════════ */
-
-/* ── XL desktops ≥1400px ─────────────────────── */
-@media(min-width:1400px){
-  :root{--sw:268px;}
-  #main{padding:26px 36px 64px;}
-  .pool-scroll{max-height:360px;}
-  .cbn{font-size:2.1rem;}
+  /* Spacing scale */
+  --sp-1: clamp(4px, 0.8vw, 6px);
+  --sp-2: clamp(7px, 1.2vw, 10px);
+  --sp-3: clamp(10px, 1.8vw, 14px);
+  --sp-4: clamp(14px, 2.4vw, 20px);
+  --sp-5: clamp(18px, 3vw, 28px);
+  --sp-6: clamp(22px, 3.6vw, 36px);
 }
 
-/* ── Large desktops 1200–1399px ──────────────── */
-@media(min-width:1200px) and (max-width:1399.98px){
-  .pool-scroll{max-height:320px;}
+/* ═══════════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: var(--fs-base);
+  min-height: 100dvh;
+  overflow-x: hidden;
+  line-height: 1.5;
 }
 
-/* ── Tablets (landscape) 992–1199px ─────────── */
-@media(min-width:992px) and (max-width:1199.98px){
-  .pool-scroll{max-height:280px;}
-  .card-body{padding:16px 18px;}
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #c8d3ea; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #b0bedd; }
+
+/* Focus ring */
+:focus-visible { outline: 2px solid var(--p); outline-offset: 2px; border-radius: 4px; }
+
+/* ═══════════════════════════════════════════════
+   TYPOGRAPHY
+═══════════════════════════════════════════════ */
+.nunito { font-family: 'Nunito', sans-serif; }
+h1, h2, h3, .h1, .h2, .h3 { font-family: 'Nunito', sans-serif; }
+
+/* ═══════════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════════ */
+#header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--hh);
+  background: var(--surf);
+  box-shadow: 0 1px 0 var(--border), 0 2px 16px rgba(15,36,96,.06);
+  display: flex;
+  align-items: center;
+  padding: 0 clamp(10px,2vw,20px);
+  z-index: 1040;
+  gap: clamp(6px,1.2vw,10px);
 }
 
-/* ── Tablets (portrait) & below <992px ──────── */
-/* Sidebar becomes a slide-in drawer               */
-@media(max-width:991.98px){
-  #ham{display:flex;}
-  .hsearch{display:none;}
-  #ov{display:block;}
-  #sidebar{
-    transform:translateX(calc(-1 * var(--sw)));
-    box-shadow:none;
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(.95rem,2vw,1.15rem);
+  font-weight: 800;
+  color: var(--p);
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: -.02em;
+}
+.logo .logo-icon {
+  width: clamp(28px,3.5vw,34px);
+  height: clamp(28px,3.5vw,34px);
+  background: var(--p);
+  border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+  font-size: clamp(.85rem,1.8vw,1rem);
+  flex-shrink: 0;
+}
+.logo span { color: var(--navy); }
+
+#ham {
+  display: none;
+  background: none;
+  border: none;
+  padding: clamp(4px,1vw,7px);
+  border-radius: var(--r-sm);
+  font-size: clamp(1.1rem,2.5vw,1.3rem);
+  color: var(--navy);
+  cursor: pointer;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: background .15s;
+}
+#ham:hover { background: var(--p-lt); color: var(--p); }
+
+.hsearch {
+  flex: 1;
+  max-width: clamp(180px, 25vw, 320px);
+  margin: 0 clamp(4px,1vw,12px);
+  position: relative;
+}
+.hsearch input {
+  width: 100%;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: clamp(5px,1vw,7px) clamp(12px,2vw,16px) clamp(5px,1vw,7px) clamp(28px,4vw,34px);
+  font-size: var(--fs-sm);
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  outline: none;
+  transition: border .2s, box-shadow .2s;
+}
+.hsearch input:focus { border-color: var(--p); box-shadow: 0 0 0 3px var(--p-glow); }
+.hsearch input::placeholder { color: var(--muted); }
+.hsearch i {
+  position: absolute; left: clamp(8px,1.5vw,11px); top: 50%; transform: translateY(-50%);
+  color: var(--muted); font-size: var(--fs-sm); pointer-events: none;
+}
+
+.hright { margin-left: auto; display: flex; align-items: center; gap: clamp(2px,.8vw,5px); flex-shrink: 0; }
+
+.hbtn {
+  width: clamp(32px,4vw,38px);
+  height: clamp(32px,4vw,38px);
+  border: none; background: none;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--navy); font-size: clamp(.9rem,2vw,1.05rem);
+  cursor: pointer; position: relative;
+  transition: background .15s, color .15s;
+}
+.hbtn:hover { background: var(--p-lt); color: var(--p); }
+.hbtn .dot {
+  position: absolute; top: 7px; right: 7px;
+  width: 7px; height: 7px;
+  background: var(--danger); border-radius: 50%;
+  border: 2px solid #fff;
+  animation: pulse-dot 2s infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+.hdiv { width: 1px; height: 24px; background: var(--border); margin: 0 clamp(2px,.6vw,5px); }
+
+.havatar {
+  width: clamp(30px,4vw,36px);
+  height: clamp(30px,4vw,36px);
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--p), #6370f5);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Nunito', sans-serif; font-weight: 700;
+  font-size: var(--fs-xs);
+  flex-shrink: 0;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px rgba(65,84,241,.2);
+  cursor: pointer;
+}
+
+/* ═══════════════════════════════════════════════
+   OVERLAY
+═══════════════════════════════════════════════ */
+#ov {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.42);
+  z-index: 1029;
+  backdrop-filter: blur(3px);
+  opacity: 0;
+  transition: opacity .28s;
+}
+#ov.show { opacity: 1; }
+
+/* ═══════════════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════════════ */
+#sidebar {
+  position: fixed;
+  top: var(--hh); left: 0;
+  width: var(--sw);
+  height: calc(100dvh - var(--hh));
+  background: var(--surf);
+  box-shadow: var(--shadow-sm);
+  overflow-y: auto; overflow-x: hidden;
+  z-index: 1030;
+  padding: clamp(6px,1vw,10px) 0 clamp(32px,5vw,48px);
+  transition: transform .28s cubic-bezier(.4,0,.2,1), box-shadow .28s;
+  border-right: 1px solid var(--border);
+}
+
+.slbl {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: #8fa3c8;
+  padding: clamp(10px,2vw,16px) clamp(14px,2.5vw,20px) clamp(4px,1vw,6px);
+  margin-top: 4px;
+}
+
+.sa {
+  display: flex; align-items: center;
+  gap: clamp(6px,1.2vw,9px);
+  padding: clamp(7px,1.5vw,10px) clamp(14px,2.5vw,20px);
+  color: var(--navy); text-decoration: none;
+  font-size: var(--fs-sm); font-weight: 500;
+  border-left: 3px solid transparent;
+  transition: all .14s;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+}
+.sa:hover { background: var(--bg); color: var(--p); }
+.sa.active { background: var(--p-lt); color: var(--p); border-left-color: var(--p); font-weight: 600; }
+.sa i { font-size: clamp(.9rem,1.8vw,1rem); min-width: 18px; flex-shrink: 0; }
+.sa .lt { flex: 1; }
+.sa .chev { font-size: var(--fs-xs); transition: transform .2s; margin-left: auto; }
+.sa[aria-expanded="true"] .chev { transform: rotate(180deg); }
+.sa .nb { font-size: var(--fs-xs); font-weight: 700; padding: .2em .45em; flex-shrink: 0; }
+
+.subnav { background: var(--surf2); }
+.subnav .sa { padding-left: clamp(30px,5vw,42px); font-weight: 400; }
+.subnav .sa.active { font-weight: 600; }
+
+/* ═══════════════════════════════════════════════
+   MAIN CONTENT
+═══════════════════════════════════════════════ */
+#main {
+  margin-left: var(--sw);
+  margin-top: var(--hh);
+  padding: var(--sp-4) clamp(14px,3vw,32px) clamp(56px,8vw,80px);
+  min-height: calc(100dvh - var(--hh));
+  transition: margin-left .28s cubic-bezier(.4,0,.2,1);
+}
+
+/* ═══════════════════════════════════════════════
+   PAGE TITLE
+═══════════════════════════════════════════════ */
+.ptitle { margin-bottom: var(--sp-3); }
+.ptitle h1 {
+  font-family: 'Nunito', sans-serif;
+  font-size: var(--fs-2xl);
+  font-weight: 800;
+  color: var(--navy);
+  margin-bottom: 2px;
+  letter-spacing: -.02em;
+}
+.breadcrumb { font-size: var(--fs-xs); margin: 0; }
+.breadcrumb-item + .breadcrumb-item::before { color: var(--muted); }
+.breadcrumb-item a { color: var(--p); text-decoration: none; }
+.breadcrumb-item a:hover { text-decoration: underline; }
+.breadcrumb-item.active { color: var(--muted); }
+
+/* ═══════════════════════════════════════════════
+   CARDS
+═══════════════════════════════════════════════ */
+.card {
+  border: none;
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: clamp(12px,2vw,20px);
+  background: var(--surf);
+  transition: box-shadow .2s;
+}
+.card:hover { box-shadow: var(--shadow); }
+.card-body { padding: clamp(14px,2.5vw,22px) clamp(14px,2.5vw,22px); }
+
+.ctitle {
+  font-family: 'Nunito', sans-serif;
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: var(--navy);
+  padding-bottom: clamp(10px,1.8vw,14px);
+  margin-bottom: clamp(10px,1.8vw,14px);
+  border-bottom: 1.5px solid var(--border2);
+  display: flex; align-items: center;
+  justify-content: space-between;
+  gap: 8px; flex-wrap: wrap;
+}
+.ctl { display: flex; align-items: center; gap: clamp(5px,1vw,8px); flex: 1; flex-wrap: wrap; }
+
+/* ═══════════════════════════════════════════════
+   FORM ELEMENTS
+═══════════════════════════════════════════════ */
+.flabel {
+  font-weight: 600; font-size: var(--fs-sm);
+  color: var(--navy); display: block;
+  margin-bottom: clamp(3px,.6vw,5px);
+}
+
+.form-control, .form-select {
+  border-radius: var(--r-sm);
+  border: 1.5px solid #cfd5e3;
+  font-size: var(--fs-base);
+  font-family: 'DM Sans', sans-serif;
+  padding: clamp(7px,1.2vw,9px) clamp(10px,1.8vw,13px);
+  color: var(--text);
+  width: 100%; outline: none;
+  transition: border .2s, box-shadow .2s;
+  background: var(--surf);
+  line-height: 1.5;
+}
+.form-control:focus, .form-select:focus {
+  border-color: var(--p);
+  box-shadow: 0 0 0 3px var(--p-glow);
+}
+.form-control[readonly] { background: var(--surf2); color: var(--muted); }
+textarea.form-control { resize: vertical; min-height: clamp(58px,8vw,76px); }
+.hint { font-size: var(--fs-xs); color: var(--muted); margin-top: 4px; line-height: 1.45; }
+
+/* Sizes */
+.form-control-sm, .form-select-sm {
+  padding: clamp(5px,.9vw,7px) clamp(8px,1.5vw,11px);
+  font-size: var(--fs-sm);
+  border-radius: var(--r-sm);
+}
+
+/* ═══════════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════════ */
+.btn {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  border-radius: var(--r-sm);
+  transition: all .15s;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  font-size: var(--fs-sm);
+  line-height: 1.4;
+}
+.btn-sm {
+  padding: clamp(5px,.9vw,6px) clamp(10px,1.8vw,13px);
+  font-size: var(--fs-xs);
+}
+.btn-lg { padding: clamp(9px,1.5vw,12px) clamp(20px,3vw,28px); font-size: var(--fs-base); }
+
+.btn-primary { background: var(--p); border-color: var(--p); color: #fff; }
+.btn-primary:hover, .btn-primary:focus { background: var(--p-dk); border-color: var(--p-dk); color: #fff; }
+.btn-primary:disabled { background: #a3adf8; border-color: #a3adf8; cursor: not-allowed; }
+
+.btn-secondary { background: var(--surf2); border-color: var(--border); color: #475569; }
+.btn-secondary:hover { background: var(--border2); }
+
+.btn-outline-primary { border-color: var(--p); color: var(--p); background: transparent; }
+.btn-outline-primary:hover { background: var(--p-lt); color: var(--p); border-color: var(--p); }
+
+.btn-outline-secondary { border-color: var(--border); color: var(--muted); background: transparent; }
+.btn-outline-secondary:hover { background: var(--bg); color: var(--text); }
+
+.btn-outline-success { border-color: var(--success); color: var(--success); background: transparent; }
+.btn-success { background: var(--success); border-color: var(--success); color: #fff; }
+.btn-success:hover { background: #15803d; border-color: #15803d; color: #fff; }
+
+/* ═══════════════════════════════════════════════
+   TABLES
+═══════════════════════════════════════════════ */
+.table { font-size: var(--fs-sm); width: 100%; border-collapse: collapse; }
+.table thead th {
+  font-size: var(--fs-xs); font-weight: 700; color: var(--navy);
+  background: var(--surf2);
+  padding: clamp(7px,1.2vw,10px) clamp(8px,1.5vw,12px);
+  white-space: nowrap;
+  border-bottom: 2px solid var(--border);
+  vertical-align: middle;
+  text-transform: uppercase; letter-spacing: .05em;
+}
+.table tbody td {
+  padding: clamp(7px,1.2vw,10px) clamp(8px,1.5vw,12px);
+  border-bottom: 1px solid var(--border2);
+  vertical-align: middle;
+}
+.table tbody tr:last-child td { border-bottom: none; }
+.table-hover tbody tr:hover td { background: #f5f7ff; }
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--r-sm);
+}
+
+/* ═══════════════════════════════════════════════
+   BADGES
+═══════════════════════════════════════════════ */
+.badge {
+  font-size: var(--fs-xs); font-weight: 700;
+  padding: .3em .58em; border-radius: 12px;
+}
+
+/* ═══════════════════════════════════════════════
+   PROGRESS
+═══════════════════════════════════════════════ */
+.progress {
+  height: 7px; border-radius: 99px;
+  background: #e2e8f4; overflow: hidden;
+}
+.progress-bar { border-radius: 99px; transition: width .5s ease; }
+
+/* ═══════════════════════════════════════════════
+   STAGE STEPS
+═══════════════════════════════════════════════ */
+.stage-steps {
+  display: flex;
+  margin-bottom: clamp(12px,2vw,18px);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  gap: 2px;
+}
+.stage-steps::-webkit-scrollbar { display: none; }
+.stage-step {
+  flex: 1; min-width: clamp(60px,10vw,80px);
+  text-align: center;
+  padding: clamp(8px,1.5vw,11px) clamp(4px,.8vw,6px);
+  font-family: 'Nunito', sans-serif;
+  font-size: var(--fs-xs); font-weight: 700;
+  border-top: 3px solid var(--border);
+  color: #aab4cc; text-transform: uppercase; letter-spacing: .05em;
+  line-height: 1.3; transition: all .2s;
+}
+.stage-step i { display: block; font-size: clamp(.85rem,1.8vw,1.05rem); margin-bottom: 4px; }
+.stage-step.done { border-top-color: var(--success); color: var(--success); }
+.stage-step.active { border-top-color: var(--p); color: var(--p); }
+
+/* ═══════════════════════════════════════════════
+   COUNTER BANNER
+═══════════════════════════════════════════════ */
+.cbanner {
+  background: linear-gradient(135deg, #3d50ef 0%, #6a75f5 55%, #7c84f7 100%);
+  color: #fff;
+  border-radius: var(--r-lg);
+  padding: clamp(12px,2.5vw,18px) clamp(14px,3vw,22px);
+  display: flex; align-items: center;
+  gap: clamp(10px,2vw,16px); flex-wrap: wrap;
+  margin-bottom: clamp(12px,2vw,18px);
+  box-shadow: var(--shadow-md);
+  position: relative; overflow: hidden;
+}
+.cbanner::before {
+  content: '';
+  position: absolute; top: -40px; right: -40px;
+  width: 160px; height: 160px;
+  background: rgba(255,255,255,.06);
+  border-radius: 50%;
+}
+.cbanner::after {
+  content: '';
+  position: absolute; bottom: -50px; left: 30%;
+  width: 120px; height: 120px;
+  background: rgba(255,255,255,.04);
+  border-radius: 50%;
+}
+.cbs { display: flex; flex-direction: column; align-items: center; min-width: clamp(44px,6vw,58px); position: relative; z-index: 1; }
+.cbn { font-family: 'Nunito', sans-serif; font-size: clamp(1.4rem,4vw,2rem); font-weight: 900; line-height: 1; letter-spacing: -.04em; }
+.cbl { font-size: var(--fs-xs); opacity: .78; text-transform: uppercase; letter-spacing: .07em; margin-top: 2px; white-space: nowrap; }
+.cbd { width: 1px; height: clamp(28px,4vw,38px); background: rgba(255,255,255,.22); flex-shrink: 0; }
+.cbprog { flex: 1; min-width: clamp(110px,20vw,150px); position: relative; z-index: 1; }
+.cbplbl { font-size: var(--fs-xs); opacity: .88; margin-bottom: 6px; line-height: 1.4; }
+.cbcov { font-size: var(--fs-xs); opacity: .72; margin-top: 4px; }
+
+/* ═══════════════════════════════════════════════
+   POOL TABLE
+═══════════════════════════════════════════════ */
+.pool-scroll {
+  max-height: clamp(200px,35vh,300px);
+  overflow-y: auto;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  -webkit-overflow-scrolling: touch;
+}
+.pool-scroll thead th {
+  position: sticky; top: 0; z-index: 2;
+  background: var(--surf2) !important;
+  box-shadow: 0 1px 0 var(--border);
+}
+tr.pool-row { transition: background .1s; }
+tr.pool-row.sel td { background: #eef0fd !important; }
+tr.pool-row.sel td:first-child { border-left: 3px solid var(--p); }
+tr.pool-row:hover td { background: #f5f7ff; }
+
+/* Pool controls */
+.pool-controls { display: flex; align-items: center; gap: clamp(6px,1.2vw,8px); flex-wrap: wrap; }
+.pool-controls .pool-search { flex: 1; min-width: clamp(120px,20vw,180px); }
+.pool-buttons { display: flex; gap: clamp(4px,.8vw,7px); flex-shrink: 0; }
+
+/* ═══════════════════════════════════════════════
+   ASSIGN BAR
+═══════════════════════════════════════════════ */
+.assign-bar {
+  margin-top: clamp(10px,2vw,14px);
+  padding: clamp(10px,1.8vw,13px) clamp(12px,2vw,15px);
+  border-radius: var(--r-sm);
+  background: var(--surf2);
+  border: 1.5px solid var(--border);
+  display: flex; align-items: center;
+  gap: clamp(6px,1.2vw,8px); flex-wrap: wrap;
+}
+.assign-lbl { font-family: 'Nunito', sans-serif; font-weight: 700; font-size: var(--fs-sm); color: var(--p); white-space: nowrap; flex-shrink: 0; }
+.assign-bar select { flex: 1; min-width: clamp(120px,18vw,160px); }
+.assign-bar .btn { white-space: nowrap; }
+
+/* ═══════════════════════════════════════════════
+   PRAYER LIST
+═══════════════════════════════════════════════ */
+.pl-wrap { border: 1.5px solid var(--border); border-radius: var(--r-sm); overflow: hidden; min-height: 80px; }
+.pl-item {
+  display: flex; align-items: flex-start;
+  gap: clamp(6px,1.2vw,9px);
+  padding: clamp(8px,1.5vw,11px) clamp(10px,1.8vw,13px);
+  border-bottom: 1px solid var(--border2);
+  animation: fadeUp .18s ease;
+  transition: background .1s;
+}
+.pl-item:last-child { border-bottom: none; }
+.pl-item:hover { background: var(--surf2); }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.pl-num {
+  width: clamp(20px,3vw,24px); height: clamp(20px,3vw,24px);
+  border-radius: 50%;
+  background: var(--p); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Nunito', sans-serif; font-size: var(--fs-xs); font-weight: 800;
+  flex-shrink: 0; margin-top: 1px;
+}
+.pl-body { flex: 1; min-width: 0; }
+.pl-topic { font-weight: 600; font-size: var(--fs-sm); word-break: break-word; }
+.pl-meta { font-size: var(--fs-xs); color: var(--muted); margin-top: 2px; word-break: break-word; line-height: 1.4; }
+.pl-remove {
+  background: none; border: none;
+  color: #c8d3e8; cursor: pointer;
+  font-size: var(--fs-sm); padding: 2px 5px;
+  border-radius: 4px; flex-shrink: 0;
+  line-height: 1; transition: color .12s, background .12s;
+  margin-top: 1px;
+}
+.pl-remove:hover { color: var(--danger); background: #fff0f0; }
+.pl-empty {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 8px; padding: clamp(22px,4vw,32px) 16px;
+  color: var(--muted); text-align: center;
+}
+.pl-empty i { font-size: clamp(1.5rem,3vw,2rem); opacity: .3; }
+.pl-empty p { font-size: var(--fs-sm); margin: 0; line-height: 1.5; }
+
+/* ═══════════════════════════════════════════════
+   GROUP CARDS (summary)
+═══════════════════════════════════════════════ */
+.gcard {
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surf);
+  margin-bottom: clamp(10px,1.8vw,14px);
+  overflow: hidden;
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow .2s, transform .2s;
+}
+.gcard:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
+.gcard.done { border-color: var(--success-bd); }
+
+.gch {
+  display: flex; align-items: center;
+  gap: clamp(8px,1.5vw,12px);
+  padding: clamp(10px,1.8vw,13px) clamp(12px,2vw,16px);
+  background: var(--surf2);
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background .15s;
+}
+.gch:hover { background: #eef1fc; }
+.gcard.done .gch { background: var(--success-lt); border-color: var(--success-bd); }
+
+.gicon {
+  width: clamp(32px,4.5vw,40px); height: clamp(32px,4.5vw,40px);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(.85rem,1.8vw,1rem); flex-shrink: 0;
+}
+.gtitle { font-family: 'Nunito', sans-serif; font-weight: 700; font-size: var(--fs-sm); color: var(--navy); margin: 0; }
+.gmeta { font-size: var(--fs-xs); color: var(--muted); margin: 0; }
+.gcard.done .gtitle { color: var(--success); }
+.gbody { padding: clamp(10px,1.8vw,13px) clamp(12px,2vw,16px) clamp(12px,2vw,15px); }
+.gbody p { font-size: var(--fs-sm); color: var(--muted); margin-bottom: clamp(8px,1.5vw,11px); line-height: 1.5; }
+
+.gch-right { text-align: right; flex-shrink: 0; min-width: clamp(68px,10vw,88px); }
+.gch-right .progress { width: clamp(58px,9vw,80px); display: inline-block; }
+.gch-right .pct-txt { font-size: var(--fs-xs); color: var(--muted); margin-top: 2px; }
+
+/* ═══════════════════════════════════════════════
+   SESSION HEADER (Live)
+═══════════════════════════════════════════════ */
+.sess-hd {
+  background: linear-gradient(135deg, #3d50ef 0%, #6a75f5 55%, #7c84f7 100%);
+  color: #fff;
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-md);
+  margin-bottom: clamp(12px,2vw,18px);
+  overflow: hidden;
+  position: relative;
+}
+.sess-hd::before {
+  content: ''; position: absolute; top: -60px; right: -60px;
+  width: 200px; height: 200px;
+  background: rgba(255,255,255,.06); border-radius: 50%;
+}
+.sess-hd::after {
+  content: ''; position: absolute; bottom: -40px; left: -20px;
+  width: 130px; height: 130px;
+  background: rgba(255,255,255,.04); border-radius: 50%;
+}
+.sess-inner {
+  padding: clamp(14px,2.5vw,20px) clamp(16px,3vw,24px);
+  position: relative; z-index: 1;
+  display: flex; align-items: center;
+  gap: clamp(12px,2vw,20px); flex-wrap: wrap;
+}
+.sess-info { flex: 1; min-width: clamp(150px,25vw,200px); }
+.sess-sub-lbl { font-size: var(--fs-xs); opacity: .75; text-transform: uppercase; letter-spacing: .07em; }
+.sess-title { font-family: 'Nunito', sans-serif; font-size: clamp(1rem,2.5vw,1.2rem); font-weight: 800; margin: 3px 0; letter-spacing: -.02em; }
+.sess-sub { font-size: var(--fs-sm); opacity: .82; }
+.sess-prog { flex-shrink: 0; }
+.sess-pct { font-family: 'Nunito', sans-serif; font-size: clamp(1.5rem,4vw,2rem); font-weight: 900; line-height: 1; letter-spacing: -.04em; }
+.sess-bar-wrap { background: rgba(255,255,255,.22); height: 8px; border-radius: 99px; overflow: hidden; margin-top: 6px; min-width: clamp(120px,20vw,160px); }
+.sess-bar-inner { height: 100%; background: #fff; border-radius: 99px; transition: width .5s ease; }
+.sess-lbl { font-size: var(--fs-xs); opacity: .8; margin-top: 3px; }
+
+/* ═══════════════════════════════════════════════
+   LEADER CARD
+═══════════════════════════════════════════════ */
+.leader-card {
+  display: flex; align-items: center;
+  gap: clamp(8px,1.5vw,11px);
+  padding: clamp(8px,1.5vw,11px) clamp(10px,1.8vw,13px);
+  border-radius: var(--r-sm);
+  border: 1.5px solid #bae6fd;
+  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+  margin-top: 8px; flex-wrap: wrap;
+}
+.lav {
+  width: clamp(32px,4.5vw,38px); height: clamp(32px,4.5vw,38px);
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--p), #6370f5);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Nunito', sans-serif; font-weight: 800;
+  font-size: var(--fs-sm); flex-shrink: 0;
+}
+.lname { font-family: 'Nunito', sans-serif; font-weight: 700; font-size: var(--fs-sm); color: var(--navy); }
+.lsub { font-size: var(--fs-xs); color: var(--muted); }
+.lclr { margin-left: auto; background: none; border: 1px solid #bae6fd; border-radius: 4px; color: #0369a1; font-size: var(--fs-xs); padding: 3px 9px; cursor: pointer; white-space: nowrap; transition: background .15s; }
+.lclr:hover { background: #e0f2fe; }
+
+/* ═══════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════ */
+.toast-el {
+  position: fixed;
+  bottom: clamp(18px,3vw,24px); left: 50%;
+  transform: translateX(-50%) translateY(12px);
+  background: var(--navy); color: #fff;
+  padding: clamp(8px,1.2vw,10px) clamp(16px,3vw,22px);
+  border-radius: 20px; font-size: var(--fs-sm); font-weight: 600;
+  z-index: 9999;
+  box-shadow: 0 6px 24px rgba(0,0,0,.22);
+  opacity: 0; transition: all .25s;
+  pointer-events: none;
+  white-space: nowrap;
+  max-width: calc(100vw - 32px); text-align: center;
+}
+.toast-el.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ═══════════════════════════════════════════════
+   MOBILE BOTTOM NAV
+═══════════════════════════════════════════════ */
+#mobileNav {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: clamp(54px,8vh,62px);
+  background: var(--surf);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -4px 20px rgba(15,36,96,.1);
+  z-index: 1035;
+  justify-content: space-around; align-items: center;
+  padding: 0 4px;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.mnav-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  gap: 2px; background: none; border: none; cursor: pointer;
+  color: var(--muted);
+  font-size: var(--fs-xs); font-weight: 600;
+  padding: clamp(5px,1vw,7px) 4px;
+  border-radius: var(--r-sm);
+  transition: color .15s, background .15s;
+  font-family: 'DM Sans', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+.mnav-btn i { font-size: clamp(1rem,2vw,1.2rem); display: block; }
+.mnav-btn.active { color: var(--p); }
+.mnav-btn:hover { background: var(--p-lt); color: var(--p); }
+
+/* ═══════════════════════════════════════════════
+   SCROLL TO TOP
+═══════════════════════════════════════════════ */
+#scrollTop {
+  position: fixed;
+  bottom: clamp(70px,12vh,80px); right: clamp(12px,2vw,18px);
+  width: clamp(34px,4vw,40px); height: clamp(34px,4vw,40px);
+  border-radius: 50%;
+  background: var(--p); color: #fff; border: none;
+  display: none; align-items: center; justify-content: center;
+  font-size: clamp(.85rem,1.8vw,1rem);
+  cursor: pointer; z-index: 1034;
+  box-shadow: 0 4px 14px rgba(65,84,241,.35);
+  transition: opacity .2s, transform .2s, background .15s;
+}
+#scrollTop:hover { background: var(--p-dk); transform: translateY(-2px); }
+#scrollTop.visible { display: flex; }
+@media (min-width: 992px) { #scrollTop { bottom: clamp(20px,3vh,26px); } }
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE BREAKPOINTS
+═══════════════════════════════════════════════ */
+
+/* XL ≥1400px */
+@media (min-width: 1400px) {
+  :root { --sw: 268px; }
+  #main { padding: clamp(22px,3vw,28px) clamp(28px,4vw,40px) 70px; }
+  .pool-scroll { max-height: 360px; }
+}
+
+/* LG 1200–1399px */
+@media (min-width: 1200px) and (max-width: 1399.98px) {
+  .pool-scroll { max-height: 320px; }
+}
+
+/* MD-LG 992–1199px */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+  .pool-scroll { max-height: 280px; }
+}
+
+/* Below LG <992px – Sidebar becomes drawer */
+@media (max-width: 991.98px) {
+  #ham { display: flex; }
+  .hsearch { display: none; }
+  #ov { display: block; }
+  #sidebar {
+    transform: translateX(calc(-1 * var(--sw)));
+    box-shadow: none;
+    border-right: none;
   }
-  #sidebar.open{
-    transform:translateX(0);
-    box-shadow:var(--shadow-md);
+  #sidebar.open {
+    transform: translateX(0);
+    box-shadow: var(--shadow-lg);
   }
-  #main{margin-left:0;}
-  .pool-scroll{max-height:250px;}
+  #main { margin-left: 0; }
+  #mobileNav { display: flex; }
+  #main { padding-bottom: clamp(68px,10vh,80px); }
+  .pool-scroll { max-height: 250px; }
 }
 
-/* ── Small tablets / large phones 768–991px ─── */
-@media(min-width:768px) and (max-width:991.98px){
-  #main{padding:16px 18px 52px;}
-  .cbanner{gap:12px 18px;padding:14px 16px;}
-  .cbn{font-size:1.6rem;}
-  /* Pool table – hide Member PPCode col to save width */
-  .th-mpp,.td-mpp{display:none;}
+/* SM-MD 768–991px */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  #main { padding: clamp(14px,2vw,18px) clamp(14px,2.5vw,20px) 76px; }
+  .th-mpp, .td-mpp { display: none; }
 }
 
-/* ── Phones <768px ───────────────────────────── */
-@media(max-width:767.98px){
-  :root{--hh:54px;}
-  #main{padding:14px 12px 52px;}
-  .ptitle{margin-bottom:10px !important;}
-  .ptitle h1{font-size:1.05rem;}
-  .ptitle .breadcrumb{font-size:.72rem;}
-  .card-body{padding:13px 13px;}
-  .ctitle{font-size:.85rem;gap:6px;}
+/* SM <768px */
+@media (max-width: 767.98px) {
+  :root { --hh: 56px; }
+  #main { padding: clamp(12px,2vw,16px) clamp(10px,1.8vw,14px) 76px; }
 
-  /* ── Counter banner → 2×2 grid ── */
-  .cbanner{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px 12px;
-    padding:13px 14px;
+  .ptitle { margin-bottom: 10px !important; }
+
+  /* Banner → 2×2 grid */
+  .cbanner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(8px,1.5vw,12px) clamp(10px,2vw,14px);
+    padding: clamp(11px,2vw,14px) clamp(12px,2.2vw,16px);
   }
-  .cbd{display:none;}
-  .cbs{align-items:flex-start;}
-  .cbprog{grid-column:1/-1;}
-  .cbn{font-size:1.45rem;}
-  .cbl{font-size:.62rem;}
+  .cbd { display: none; }
+  .cbs { align-items: flex-start; }
+  .cbprog { grid-column: 1 / -1; }
 
-  /* ── Pool controls: stack search then buttons ── */
-  .pool-controls{flex-direction:column !important;gap:8px !important;}
-  .pool-search{width:100% !important;max-width:100% !important;}
-  .pool-buttons{width:100%;display:flex;gap:6px;}
-  .pool-buttons .btn{flex:1;}
+  /* Pool controls stack */
+  .pool-controls { flex-direction: column !important; gap: 8px !important; }
+  .pool-search { width: 100% !important; max-width: 100% !important; }
+  .pool-buttons { width: 100%; display: flex; gap: 6px; }
+  .pool-buttons .btn { flex: 1; }
 
-  /* ── Pool table: hide less critical columns ── */
-  .th-mpp,.td-mpp{display:none;}
-  .th-date,.td-date{display:none;}
-  .pool-scroll{max-height:220px;}
-  .table{font-size:.78rem;}
-  .table thead th{padding:8px 7px;}
-  .table tbody td{padding:8px 7px;}
+  /* Hide less-critical columns */
+  .th-mpp, .td-mpp, .th-date, .td-date { display: none; }
+  .pool-scroll { max-height: 220px; }
 
-  /* ── Assign bar: vertical stack ── */
-  .assign-bar{flex-direction:column !important;gap:7px !important;}
-  .assign-lbl{font-size:.82rem;}
-  .assign-bar select,
-  .assign-bar .btn{width:100% !important;}
+  /* Assign bar vertical */
+  .assign-bar { flex-direction: column !important; gap: 7px !important; }
+  .assign-bar select, .assign-bar .btn { width: 100% !important; }
 
-  /* ── Stage steps ── */
-  .stage-step{min-width:56px;font-size:.58rem;padding:7px 3px;}
-  .stage-step i{font-size:.85rem;margin-bottom:2px;}
-
-  /* ── Session header stacks ── */
-  .sess-inner{flex-direction:column;align-items:stretch;gap:10px;}
-  .sess-prog{width:100%;}
-  .sess-bar-wrap{width:100% !important;min-width:0 !important;}
-  .sess-pct{font-size:1.5rem;}
-
-  /* ── Group cards ── */
-  .gch{padding:10px 12px;gap:8px;}
-  .gbody{padding:10px 12px 13px;}
-  .gch-right .progress{width:58px;}
-  .gch-right{min-width:70px;}
-
-  /* ── Prayer list items ── */
-  .pl-item{padding:8px 10px;gap:7px;}
-  .pl-code{display:none;}     /* hide ppcode on phone, saves width */
-  .pl-topic{font-size:.82rem;}
-
-  /* ── Leader card ── */
-  .leader-card{flex-wrap:wrap;gap:8px;}
-  .lclr{margin-left:0;}
-
-  /* ── Modals full-width ── */
-  .modal-dialog{margin:.4rem;}
-  .modal-dialog-centered{min-height:calc(100% - .8rem);}
-}
-
-/* ── Small phones <576px ─────────────────────── */
-@media(max-width:575.98px){
-  .logo span{display:none;}
-  .hdiv,#hChat{display:none;}
-  #main{padding:12px 9px 48px;}
-  .card-body{padding:12px 11px;}
-
-  /* Banner tighter */
-  .cbanner{padding:11px 11px;gap:7px 10px;}
-  .cbn{font-size:1.3rem;}
-
-  /* Pool scroll even smaller */
-  .pool-scroll{max-height:190px;}
-  .table{font-size:.73rem;}
-  .table thead th,.table tbody td{padding:7px 6px;}
+  /* Session header stack */
+  .sess-inner { flex-direction: column; align-items: stretch; gap: 10px; }
+  .sess-prog { width: 100%; }
+  .sess-bar-wrap { width: 100% !important; min-width: 0 !important; }
 
   /* Group cards */
-  .gicon{width:30px;height:30px;font-size:.82rem;}
-  .gtitle{font-size:.81rem;}
-  .gch-right .progress{width:50px;}
-  .gch-right{min-width:64px;}
+  .gch-right .progress { width: clamp(52px,8vw,68px); }
+  .gch-right { min-width: clamp(62px,10vw,78px); }
 
-  /* Stage */
-  .stage-step{min-width:48px;font-size:.54rem;padding:6px 2px;}
-  .stage-step i{font-size:.8rem;}
+  .pl-code { display: none; }
 
-  /* Modal */
-  .modal-dialog{margin:.25rem;}
-  .modal-body{padding:14px 12px;}
-  .modal-footer{padding:10px 12px;}
+  .leader-card { flex-wrap: wrap; gap: 8px; }
+  .lclr { margin-left: 0; }
 }
 
-/* ── Tiny phones <400px ──────────────────────── */
-@media(max-width:399.98px){
-  #main{padding:10px 8px 44px;}
-  .card-body{padding:11px 10px;}
-  .cbanner{padding:10px 10px;gap:6px 8px;}
-  .cbn{font-size:1.15rem;}
-  .gch{padding:9px 10px;}
-  .gbody{padding:9px 10px 11px;}
-  .pl-item{padding:7px 9px;gap:6px;}
-  .pl-num{width:19px;height:19px;font-size:.63rem;}
-  .assign-lbl{font-size:.76rem;}
-  .stage-step{min-width:42px;font-size:.5rem;}
-  .modal-dialog{margin:.15rem;}
+/* XS <576px */
+@media (max-width: 575.98px) {
+  .logo span { display: none; }
+  .hdiv, #hChat { display: none; }
+  #main { padding-left: clamp(8px,1.5vw,12px); padding-right: clamp(8px,1.5vw,12px); }
+  .pool-scroll { max-height: 190px; }
+  .gicon { width: 28px; height: 28px; font-size: .8rem; }
+  .stage-step { min-width: 52px; }
+  .modal-dialog { margin: .3rem; }
+  .modal-body { padding: clamp(12px,2vw,16px); }
+  .modal-footer { padding: 10px clamp(12px,2vw,16px); }
 }
 
-/* ── Landscape phones (height-constrained) ───── */
-@media(max-height:500px) and (max-width:900px){
-  :root{--hh:48px;}
-  #main{padding-top:8px;}
-  .pool-scroll{max-height:160px;}
-  .cbanner{padding:8px 12px;}
-  .cbn{font-size:1.2rem;}
-  .stage-steps{margin-bottom:10px;}
-  .modal-dialog{margin-top:.2rem;margin-bottom:.2rem;}
+/* Tiny <400px */
+@media (max-width: 399.98px) {
+  #main { padding-left: 8px; padding-right: 8px; }
+  .pool-scroll { max-height: 170px; }
+  .stage-step { min-width: 44px; font-size: .52rem; }
+  .stage-step i { font-size: .78rem; }
+  .gch { padding: 9px 10px; gap: 7px; }
+  .gbody { padding: 9px 10px 11px; }
+  .modal-dialog { margin: .15rem; }
 }
 
-/* ── Print ───────────────────────────────────── */
-@media print{
-  #header,#sidebar,#ov,.btn,.assign-bar,
-  .pool-controls,.stage-steps{display:none !important;}
-  #main{margin:0 !important;padding:12px !important;}
-  .card{box-shadow:none !important;border:1px solid #ddd !important;}
-  .cbanner{background:#eee !important;color:#000 !important;-webkit-print-color-adjust:exact;}
+/* Landscape + height-constrained */
+@media (max-height: 500px) and (max-width: 900px) {
+  :root { --hh: 50px; }
+  #main { padding-top: 8px; }
+  .pool-scroll { max-height: 150px; }
+  .cbanner { padding: 8px 12px; }
+  .stage-steps { margin-bottom: 8px; }
+}
+
+/* Print */
+@media print {
+  #header, #sidebar, #ov, .btn, .assign-bar,
+  .pool-controls, .stage-steps, #mobileNav, #scrollTop { display: none !important; }
+  #main { margin: 0 !important; padding: 12px !important; }
+  .card { box-shadow: none !important; border: 1px solid #ddd !important; }
+  .cbanner { background: #eee !important; color: #000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
+/* High-DPI / Retina sharpness */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .card { box-shadow: var(--shadow-xs); }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
 </style>
 </head>
@@ -399,32 +941,37 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
 
 <!-- HEADER -->
 <header id="header">
-  <button id="ham" aria-label="Toggle menu"><i class="bi bi-list"></i></button>
-  <a class="logo" href="#"><i class="bi bi-person-arms-up"></i><span>VCMIS</span></a>
-  <div class="hsearch"><i class="bi bi-search"></i><input type="text" placeholder="Search PPCodes, members..."></div>
+  <button id="ham" aria-label="Toggle sidebar menu"><i class="bi bi-list"></i></button>
+  <a class="logo" href="#">
+    <div class="logo-icon"><i class="bi bi-person-arms-up"></i></div>
+    <span>VCMIS</span>
+  </a>
+  <div class="hsearch"><i class="bi bi-search"></i><input type="text" placeholder="Search PPCodes, members..." aria-label="Search"></div>
   <div class="hright">
-    <button class="hbtn"><i class="bi bi-bell"></i><span class="dot"></span></button>
-    <button class="hbtn" id="hChat"><i class="bi bi-chat-left-text"></i></button>
+    <button class="hbtn" aria-label="Notifications"><i class="bi bi-bell"></i><span class="dot"></span></button>
+    <button class="hbtn" id="hChat" aria-label="Chat"><i class="bi bi-chat-left-text"></i></button>
     <div class="hdiv"></div>
-    <div class="havatar">JA</div>
+    <div class="havatar" title="John Asante — JA" role="button" tabindex="0">JA</div>
   </div>
 </header>
 
-<div id="ov"></div>
+<div id="ov" role="presentation"></div>
 
 <!-- SIDEBAR -->
-<aside id="sidebar">
+<aside id="sidebar" role="navigation" aria-label="Main navigation">
   <div class="slbl">Main</div>
   <a class="sa" href="#"><i class="bi bi-grid"></i><span class="lt">Dashboard</span></a>
   <a class="sa" href="#"><i class="bi bi-people"></i><span class="lt">Membership</span></a>
+
   <div class="slbl">Member Modules</div>
   <a class="sa" href="#"><i class="bi bi-hand-index-thumb"></i><span class="lt">Prayer Request</span></a>
   <a class="sa" href="#"><i class="bi bi-megaphone"></i><span class="lt">Announcements</span></a>
   <a class="sa" href="#"><i class="bi bi-patch-check"></i><span class="lt">Permissions</span></a>
   <a class="sa" href="#"><i class="bi bi-heart-pulse"></i><span class="lt">Welfare</span></a>
   <a class="sa" href="#"><i class="bi bi-lightbulb"></i><span class="lt">Suggestions</span></a>
+
   <div class="slbl">Management</div>
-  <a class="sa active" href="#pSub" data-bs-toggle="collapse" aria-expanded="true">
+  <a class="sa active" href="#pSub" data-bs-toggle="collapse" aria-expanded="true" role="button">
     <i class="bi bi-hand-index-thumb"></i><span class="lt">Prayer Tower</span><i class="bi bi-chevron-down chev"></i>
   </a>
   <div class="collapse show subnav" id="pSub">
@@ -432,7 +979,7 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
     <a class="sa active" href="#" onclick="sv('builder');return false;"><i class="bi bi-list-check"></i><span class="lt">Prayer List Builder</span></a>
     <a class="sa" href="#" onclick="sv('live');return false;"><i class="bi bi-play-circle"></i><span class="lt">Live Session</span></a>
   </div>
-  <a class="sa" href="#aSub" data-bs-toggle="collapse" aria-expanded="false">
+  <a class="sa" href="#aSub" data-bs-toggle="collapse" aria-expanded="false" role="button">
     <i class="bi bi-clipboard2-check"></i><span class="lt">Approval</span>
     <span class="nb badge bg-danger">12</span><i class="bi bi-chevron-down chev"></i>
   </a>
@@ -443,13 +990,14 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
     <a class="sa" href="#"><i class="bi bi-heart-pulse"></i><span class="lt">Welfare</span><span class="nb badge bg-warning text-dark ms-auto">2</span></a>
     <a class="sa" href="#"><i class="bi bi-lightbulb"></i><span class="lt">Suggestions</span><span class="nb badge bg-warning text-dark ms-auto">1</span></a>
   </div>
+
   <div class="slbl">Admin</div>
   <a class="sa" href="#"><i class="bi bi-gear"></i><span class="lt">Settings</span></a>
   <a class="sa" href="#"><i class="bi bi-box-arrow-right"></i><span class="lt">Logout</span></a>
 </aside>
 
 <!-- MAIN -->
-<main id="main">
+<main id="main" role="main">
   <div class="ptitle">
     <h1>Prayer Tower</h1>
     <nav aria-label="breadcrumb">
@@ -480,7 +1028,7 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
               </tr></thead>
               <tbody>
                 <tr style="cursor:pointer" onclick="sv('live')">
-                  <td><span style="font-family:monospace;font-size:.76rem;">PS202403060001</span></td>
+                  <td><span style="font-family:monospace;font-size:.74rem;">PS202403060001</span></td>
                   <td><small>2026-03-06</small></td>
                   <td><strong>March Prayer Tower</strong></td>
                   <td class="text-center"><span class="badge bg-primary">200</span></td>
@@ -495,7 +1043,7 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
                   </td>
                 </tr>
                 <tr>
-                  <td><span style="font-family:monospace;font-size:.76rem;">PS202402010001</span></td>
+                  <td><span style="font-family:monospace;font-size:.74rem;">PS202402010001</span></td>
                   <td><small>2026-02-01</small></td>
                   <td>February Prayer Tower</td>
                   <td class="text-center"><span class="badge bg-primary">145</span></td>
@@ -518,15 +1066,15 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
     <div id="vBuilder">
 
       <!-- Stage -->
-      <div class="stage-steps">
-        <div class="stage-step done"><i class="bi bi-calendar-plus"></i>Create Session</div>
-        <div class="stage-step active"><i class="bi bi-list-check"></i>Build Prayer List</div>
-        <div class="stage-step"><i class="bi bi-play-circle"></i>Run Session</div>
-        <div class="stage-step"><i class="bi bi-check2-all"></i>Completed</div>
+      <div class="stage-steps" role="list" aria-label="Session stages">
+        <div class="stage-step done" role="listitem"><i class="bi bi-calendar-plus"></i>Create Session</div>
+        <div class="stage-step active" role="listitem"><i class="bi bi-list-check"></i>Build Prayer List</div>
+        <div class="stage-step" role="listitem"><i class="bi bi-play-circle"></i>Run Session</div>
+        <div class="stage-step" role="listitem"><i class="bi bi-check2-all"></i>Completed</div>
       </div>
 
       <!-- Counter Banner -->
-      <div class="cbanner">
+      <div class="cbanner" role="region" aria-label="Prayer list statistics">
         <div class="cbs"><div class="cbn" id="cbSel">0</div><div class="cbl">In List</div></div>
         <div class="cbd"></div>
         <div class="cbs"><div class="cbn" id="cbAvail">30</div><div class="cbl">Available</div></div>
@@ -535,8 +1083,8 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
         <div class="cbd"></div>
         <div class="cbprog">
           <div class="cbplbl" id="cbLbl">Tick rows in the pool to build the prayer list</div>
-          <div class="progress" style="height:9px;background:rgba(255,255,255,.25);">
-            <div class="progress-bar" id="cbBar" style="width:0%;background:#fff;opacity:.88;"></div>
+          <div class="progress" style="height:9px;background:rgba(255,255,255,.22);">
+            <div class="progress-bar" id="cbBar" style="width:0%;background:#fff;opacity:.88;" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
           </div>
           <div class="cbcov" id="cbCov">0 of 30 approved requests added to prayer list</div>
         </div>
@@ -550,53 +1098,54 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
             <div class="ctitle"><span class="ctl"><i class="bi bi-calendar3 text-primary"></i>Session Details</span></div>
 
             <div class="mb-3">
-              <label class="flabel">Session Code</label>
-              <input class="form-control" type="text" value="PS202403060001" readonly>
+              <label class="flabel" for="sessCode">Session Code</label>
+              <input class="form-control" id="sessCode" type="text" value="PS202403060001" readonly aria-readonly="true">
               <div class="hint">Auto-generated.</div>
             </div>
             <div class="mb-3">
-              <label class="flabel">Session Date <span class="text-danger">*</span></label>
-              <input class="form-control" type="date" value="2026-03-06" required>
+              <label class="flabel" for="sessDate">Session Date <span class="text-danger">*</span></label>
+              <input class="form-control" id="sessDate" type="date" value="2026-03-06" required>
             </div>
             <div class="mb-3">
-              <label class="flabel">Session Title <span class="text-danger">*</span></label>
-              <input class="form-control" type="text" value="March Prayer Tower" required>
+              <label class="flabel" for="sessTitle">Session Title <span class="text-danger">*</span></label>
+              <input class="form-control" id="sessTitle" type="text" value="March Prayer Tower" required>
             </div>
 
             <!-- Prayer Leader PPCode -->
             <div class="mb-3">
-              <label class="flabel">Prayer Leader PPCode <span class="text-danger">*</span></label>
+              <label class="flabel" for="leaderInput">Prayer Leader PPCode <span class="text-danger">*</span></label>
               <div class="d-flex gap-2">
                 <input class="form-control" type="text" id="leaderInput"
                   placeholder="e.g. MB20240001"
-                  oninput="this.value=this.value.toUpperCase();" required>
-                <button class="btn btn-outline-primary btn-sm px-3" onclick="lookupLeader()" title="Lookup">
+                  oninput="this.value=this.value.toUpperCase();" required
+                  aria-describedby="leaderHint">
+                <button class="btn btn-outline-primary btn-sm px-3" onclick="lookupLeader()" title="Lookup leader" aria-label="Look up prayer leader">
                   <i class="bi bi-search"></i>
                 </button>
               </div>
-              <div id="leaderCard" class="leader-card" style="display:none;">
+              <div id="leaderCard" class="leader-card" style="display:none;" role="status" aria-live="polite">
                 <div class="lav" id="lAv">EM</div>
                 <div><div class="lname" id="lName">Elder Mensah</div><div class="lsub" id="lSub">Elder &middot; MB20240001</div></div>
-                <button class="lclr" onclick="clearLeader()">&#x2715; Clear</button>
+                <button class="lclr" onclick="clearLeader()" aria-label="Clear leader selection">&#x2715; Clear</button>
               </div>
-              <div class="hint">Enter the Prayer Leader's PPCode and click <i class="bi bi-search"></i> to verify.</div>
+              <div class="hint" id="leaderHint">Enter the Prayer Leader's PPCode and click <i class="bi bi-search"></i> to verify.</div>
             </div>
 
             <div class="mb-3">
-              <label class="flabel">Remarks</label>
-              <textarea class="form-control" rows="2" placeholder="Optional notes..."></textarea>
+              <label class="flabel" for="sessRemarks">Remarks</label>
+              <textarea class="form-control" id="sessRemarks" rows="2" placeholder="Optional notes..."></textarea>
             </div>
 
-            <hr style="border-color:var(--border);margin:14px 0;">
+            <hr style="border-color:var(--border);margin:clamp(10px,2vw,15px) 0;">
             <div class="d-flex justify-content-between align-items-center mb-2">
               <small class="text-muted">Requests in prayer list:</small>
               <span class="badge bg-primary" id="sideCount">0</span>
             </div>
             <div class="d-flex justify-content-between align-items-center mb-3">
               <small class="text-muted">Groups created:</small>
-              <span class="badge bg-info text-dark" id="sideGrps">7</span>
+              <span class="badge bg-info text-white" id="sideGrps">7</span>
             </div>
-            <button class="btn btn-primary w-100" id="btnStart" onclick="sv('live')" disabled>
+            <button class="btn btn-primary w-100" id="btnStart" onclick="sv('live')" disabled aria-disabled="true">
               <i class="bi bi-play-circle me-1"></i>Start Session
             </button>
             <div class="hint text-center mt-1">Add at least one request to enable.</div>
@@ -612,11 +1161,10 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
               <span class="ctl"><i class="bi bi-database text-primary"></i>Approved Prayer Requests Pool</span>
             </div>
 
-            <!-- Pool controls (responsive) -->
             <div class="pool-controls mb-2">
               <input type="text" class="form-control form-control-sm pool-search"
                 placeholder="Search PPCode, name or topic..."
-                id="poolQ" oninput="renderPool()">
+                id="poolQ" oninput="renderPool()" aria-label="Search prayer requests">
               <div class="pool-buttons">
                 <button class="btn btn-sm btn-outline-primary" onclick="selectAll()">
                   <i class="bi bi-check2-all me-1"></i>Select All
@@ -633,12 +1181,12 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
               <strong>Untick</strong> to remove. All changes are live.
             </div>
 
-            <div class="pool-scroll">
+            <div class="pool-scroll" role="region" aria-label="Prayer requests pool">
               <table class="table table-sm table-hover align-middle mb-0">
                 <thead>
                   <tr>
                     <th style="width:34px;">
-                      <input type="checkbox" id="chkAll" onchange="masterTick(this)" title="Select/deselect all">
+                      <input type="checkbox" id="chkAll" onchange="masterTick(this)" title="Select or deselect all" aria-label="Select all requests">
                     </th>
                     <th>Prayer PPCode</th>
                     <th class="th-mpp">Member PPCode</th>
@@ -651,9 +1199,9 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
             </div>
 
             <!-- Assign bar -->
-            <div class="assign-bar">
+            <div class="assign-bar" role="group" aria-label="Assign to group">
               <span class="assign-lbl"><i class="bi bi-tag me-1"></i>Assign selected to group:</span>
-              <select class="form-select form-select-sm" id="gSel">
+              <select class="form-select form-select-sm" id="gSel" aria-label="Choose group">
                 <option value="">-- choose group --</option>
               </select>
               <button class="btn btn-sm btn-primary" onclick="assignGroup()">
@@ -674,7 +1222,7 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
                 <span class="badge bg-primary" id="plBadge">0</span>
               </span>
               <button class="btn btn-sm btn-outline-secondary" id="btnClrList"
-                onclick="clearAll()" style="display:none;">
+                onclick="clearAll()" style="display:none;" aria-label="Clear all prayer list items">
                 <i class="bi bi-x me-1"></i>Clear All
               </button>
             </div>
@@ -683,9 +1231,9 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
               Untick or click <strong>&#x2715;</strong> to remove instantly.
               Use <em>Add to Prayer List</em> to assign a group tag.
             </p>
-            <div class="pl-wrap" id="plWrap">
+            <div class="pl-wrap" id="plWrap" role="list" aria-label="Prayer list items">
               <div class="pl-empty" id="plEmpty">
-                <i class="bi bi-journal-plus"></i>
+                <i class="bi bi-journal-plus" aria-hidden="true"></i>
                 <p>No requests yet.<br>Tick rows in the pool above to build the list.</p>
               </div>
             </div>
@@ -705,7 +1253,7 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
     <div id="vLive" style="display:none;">
 
       <!-- Session header -->
-      <div class="sess-hd mb-3">
+      <div class="sess-hd">
         <div class="sess-inner">
           <div class="sess-info">
             <div class="sess-sub-lbl">Active Session</div>
@@ -719,7 +1267,7 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
             <div class="sess-sub-lbl">Overall Progress</div>
             <div class="sess-pct" id="ovPct">80%</div>
             <div class="sess-bar-wrap">
-              <div class="sess-bar-inner" id="ovBar" style="width:80%;"></div>
+              <div class="sess-bar-inner" id="ovBar" style="width:80%;" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
             <div class="sess-lbl" id="ovLbl">160 of 200 prayed</div>
           </div>
@@ -727,11 +1275,11 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
       </div>
 
       <!-- Stage -->
-      <div class="stage-steps mb-3">
-        <div class="stage-step done"><i class="bi bi-calendar-plus"></i>Session Created</div>
-        <div class="stage-step done"><i class="bi bi-list-check"></i>List Built</div>
-        <div class="stage-step active"><i class="bi bi-play-circle"></i>In Progress</div>
-        <div class="stage-step"><i class="bi bi-check2-all"></i>Completed</div>
+      <div class="stage-steps mb-3" role="list" aria-label="Session stages">
+        <div class="stage-step done" role="listitem"><i class="bi bi-calendar-plus"></i>Session Created</div>
+        <div class="stage-step done" role="listitem"><i class="bi bi-list-check"></i>List Built</div>
+        <div class="stage-step active" role="listitem"><i class="bi bi-play-circle"></i>In Progress</div>
+        <div class="stage-step" role="listitem"><i class="bi bi-check2-all"></i>Completed</div>
       </div>
 
       <!-- Group cards -->
@@ -740,7 +1288,7 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
         <div class="col-12 col-md-6">
           <div class="gcard" id="lg1">
             <div class="gch">
-              <div class="gicon" style="background:#e8f4fd;color:#0d6efd;"><i class="bi bi-briefcase"></i></div>
+              <div class="gicon" style="background:#dbeafe;color:#1d4ed8;"><i class="bi bi-briefcase" aria-hidden="true"></i></div>
               <div class="flex-fill"><p class="gtitle">Job Opportunities</p><p class="gmeta">50 requests &middot; Pending</p></div>
               <div class="gch-right">
                 <span class="badge bg-secondary d-block mb-1">Pending</span>
@@ -760,7 +1308,7 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
         <div class="col-12 col-md-6">
           <div class="gcard done" id="lg2">
             <div class="gch">
-              <div class="gicon" style="background:#d4edda;color:#155724;"><i class="bi bi-airplane"></i></div>
+              <div class="gicon" style="background:#dcfce7;color:#15803d;"><i class="bi bi-airplane" aria-hidden="true"></i></div>
               <div class="flex-fill"><p class="gtitle">Travel Opportunities</p><p class="gmeta" style="color:var(--success);">10 requests &middot; Prayed &#x2713;</p></div>
               <div class="gch-right">
                 <span class="badge bg-success d-block mb-1">Prayed</span>
@@ -770,7 +1318,7 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
             </div>
             <div class="gbody">
               <p style="color:var(--success);"><i class="bi bi-check-circle me-1"></i>Prayers completed for this group.</p>
-              <button class="btn btn-outline-success btn-sm w-100" disabled><i class="bi bi-check2-all me-1"></i>Done</button>
+              <button class="btn btn-outline-success btn-sm w-100" disabled aria-disabled="true"><i class="bi bi-check2-all me-1"></i>Done</button>
             </div>
           </div>
         </div>
@@ -778,7 +1326,7 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
         <div class="col-12 col-md-6">
           <div class="gcard done" id="lg3">
             <div class="gch">
-              <div class="gicon" style="background:#d4edda;color:#155724;"><i class="bi bi-hearts"></i></div>
+              <div class="gicon" style="background:#fce7f3;color:#be185d;"><i class="bi bi-hearts" aria-hidden="true"></i></div>
               <div class="flex-fill"><p class="gtitle">Marriage</p><p class="gmeta" style="color:var(--success);">100 requests &middot; Prayed &#x2713;</p></div>
               <div class="gch-right">
                 <span class="badge bg-success d-block mb-1">Prayed</span>
@@ -788,7 +1336,7 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
             </div>
             <div class="gbody">
               <p style="color:var(--success);"><i class="bi bi-check-circle me-1"></i>Prayers completed for this group.</p>
-              <button class="btn btn-outline-success btn-sm w-100" disabled><i class="bi bi-check2-all me-1"></i>Done</button>
+              <button class="btn btn-outline-success btn-sm w-100" disabled aria-disabled="true"><i class="bi bi-check2-all me-1"></i>Done</button>
             </div>
           </div>
         </div>
@@ -796,7 +1344,7 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
         <div class="col-12 col-md-6">
           <div class="gcard" id="lg4">
             <div class="gch">
-              <div class="gicon" style="background:#e8f5e9;color:#2e7d32;"><i class="bi bi-mortarboard"></i></div>
+              <div class="gicon" style="background:#fef9c3;color:#a16207;"><i class="bi bi-mortarboard" aria-hidden="true"></i></div>
               <div class="flex-fill"><p class="gtitle">Education / Schools</p><p class="gmeta">40 requests &middot; Pending</p></div>
               <div class="gch-right">
                 <span class="badge bg-secondary d-block mb-1">Pending</span>
@@ -826,36 +1374,42 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
   </section>
 </main>
 
-<!-- ── NEW GROUP MODAL ───────────────────────── -->
-<div class="modal fade" id="ngModal" tabindex="-1">
+<!-- ── NEW GROUP MODAL ─────────────────────── -->
+<div class="modal fade" id="ngModal" tabindex="-1" role="dialog" aria-labelledby="ngModalTitle" aria-modal="true">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" style="font-family:'Nunito',sans-serif;font-weight:700;">
+    <div class="modal-content" style="border-radius:var(--r-lg);border:none;box-shadow:var(--shadow-lg);">
+      <div class="modal-header" style="border-bottom:1.5px solid var(--border);">
+        <h5 class="modal-title" id="ngModalTitle" style="font-family:'Nunito',sans-serif;font-weight:700;font-size:var(--fs-lg);">
           <i class="bi bi-plus-circle me-2 text-primary"></i>Create New Group
         </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
-        <label class="flabel">Group Name <span class="text-danger">*</span></label>
-        <input type="text" class="form-control mb-3" id="ngName" placeholder="e.g. Healing, Finances...">
-        <label class="flabel">Icon</label>
-        <select class="form-select mb-3" id="ngIcon">
-          <option value="bi-patch-question">General</option>
-          <option value="bi-briefcase">Job / Career</option>
-          <option value="bi-hearts">Marriage / Relationship</option>
-          <option value="bi-mortarboard">Education</option>
-          <option value="bi-airplane">Travel</option>
-          <option value="bi-activity">Healing / Health</option>
-          <option value="bi-cash-coin">Finances</option>
-          <option value="bi-house">Housing</option>
-          <option value="bi-people">Family</option>
-          <option value="bi-globe">Nation / Country</option>
-        </select>
-        <label class="flabel">Description <span class="text-muted fw-normal">(optional)</span></label>
-        <textarea class="form-control" id="ngDesc" rows="2" placeholder="Brief description..."></textarea>
+      <div class="modal-body" style="padding:clamp(16px,2.5vw,22px);">
+        <div class="mb-3">
+          <label class="flabel" for="ngName">Group Name <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="ngName" placeholder="e.g. Healing, Finances..." required>
+        </div>
+        <div class="mb-3">
+          <label class="flabel" for="ngIcon">Icon</label>
+          <select class="form-select" id="ngIcon">
+            <option value="bi-patch-question">General</option>
+            <option value="bi-briefcase">Job / Career</option>
+            <option value="bi-hearts">Marriage / Relationship</option>
+            <option value="bi-mortarboard">Education</option>
+            <option value="bi-airplane">Travel</option>
+            <option value="bi-activity">Healing / Health</option>
+            <option value="bi-cash-coin">Finances</option>
+            <option value="bi-house">Housing</option>
+            <option value="bi-people">Family</option>
+            <option value="bi-globe">Nation / Country</option>
+          </select>
+        </div>
+        <div class="mb-1">
+          <label class="flabel" for="ngDesc">Description <span class="text-muted fw-normal">(optional)</span></label>
+          <textarea class="form-control" id="ngDesc" rows="2" placeholder="Brief description..."></textarea>
+        </div>
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer" style="border-top:1.5px solid var(--border);">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
         <button type="button" class="btn btn-primary" onclick="createGroup()"><i class="bi bi-plus me-1"></i>Add Group</button>
       </div>
@@ -863,20 +1417,20 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
   </div>
 </div>
 
-<!-- ── LEADER LOOKUP MODAL ───────────────────── -->
-<div class="modal fade" id="ldrModal" tabindex="-1">
+<!-- ── LEADER LOOKUP MODAL ─────────────────── -->
+<div class="modal fade" id="ldrModal" tabindex="-1" role="dialog" aria-labelledby="ldrModalTitle" aria-modal="true">
   <div class="modal-dialog modal-dialog-centered modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" style="font-family:'Nunito',sans-serif;font-weight:700;">
+    <div class="modal-content" style="border-radius:var(--r-lg);border:none;box-shadow:var(--shadow-lg);">
+      <div class="modal-header" style="border-bottom:1.5px solid var(--border);">
+        <h5 class="modal-title" id="ldrModalTitle" style="font-family:'Nunito',sans-serif;font-weight:700;font-size:var(--fs-lg);">
           <i class="bi bi-person-badge me-2 text-primary"></i>PPCode Lookup
         </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body" id="ldrBody"></div>
-      <div class="modal-footer">
+      <div class="modal-body" id="ldrBody" role="status" aria-live="polite"></div>
+      <div class="modal-footer" style="border-top:1.5px solid var(--border);">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" id="btnConfLdr" disabled>
+        <button type="button" class="btn btn-primary" id="btnConfLdr" disabled aria-disabled="true">
           <i class="bi bi-check me-1"></i>Confirm
         </button>
       </div>
@@ -884,7 +1438,26 @@ tr.pool-row.sel td:first-child{border-left:3px solid var(--p);}
   </div>
 </div>
 
-<div class="toast-el" id="toastEl"></div>
+<!-- TOAST -->
+<div class="toast-el" id="toastEl" role="alert" aria-live="polite" aria-atomic="true"></div>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav id="mobileNav" role="navigation" aria-label="Mobile navigation">
+  <button class="mnav-btn" onclick="sv('sessions');setMNav(this)" aria-label="Sessions">
+    <i class="bi bi-calendar3" aria-hidden="true"></i><span>Sessions</span>
+  </button>
+  <button class="mnav-btn active" onclick="sv('builder');setMNav(this)" aria-label="Builder">
+    <i class="bi bi-list-check" aria-hidden="true"></i><span>Builder</span>
+  </button>
+  <button class="mnav-btn" onclick="sv('live');setMNav(this)" aria-label="Live Session">
+    <i class="bi bi-play-circle" aria-hidden="true"></i><span>Live</span>
+  </button>
+</nav>
+
+<!-- SCROLL TO TOP -->
+<button id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top" aria-label="Scroll to top">
+  <i class="bi bi-chevron-up" aria-hidden="true"></i>
+</button>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -935,9 +1508,9 @@ var MEMBERS={
 };
 
 /* ── STATE ──────────────────────────────────────── */
-var prayerList=[],groups=[],leaderPP='',leaderData=null;
-var prayedLive=160,totalLive=200;
-var $ngM,$lM;
+var prayerList=[], groups=[], leaderPP='', leaderData=null;
+var prayedLive=160, totalLive=200;
+var $ngM, $lM;
 
 var TOPIC_COLORS={
   'Job Opportunity':    'background:#dbeafe;color:#1d4ed8',
@@ -950,36 +1523,53 @@ var TOPIC_COLORS={
 };
 
 /* ── INIT ───────────────────────────────────────── */
-document.addEventListener('DOMContentLoaded',function(){
-  $ngM=new bootstrap.Modal(document.getElementById('ngModal'));
-  $lM=new bootstrap.Modal(document.getElementById('ldrModal'));
+document.addEventListener('DOMContentLoaded', function() {
+  $ngM = new bootstrap.Modal(document.getElementById('ngModal'));
+  $lM  = new bootstrap.Modal(document.getElementById('ldrModal'));
 
   /* Sidebar drawer */
-  var ham=document.getElementById('ham');
-  var sb=document.getElementById('sidebar');
-  var ov=document.getElementById('ov');
-  function closeSB(){sb.classList.remove('open');ov.classList.remove('show');document.body.style.overflow='';}
-  ham.addEventListener('click',function(){
-    var open=sb.classList.toggle('open');
-    ov.classList.toggle('show',open);
-    document.body.style.overflow=open?'hidden':'';
+  var ham = document.getElementById('ham');
+  var sb  = document.getElementById('sidebar');
+  var ov  = document.getElementById('ov');
+
+  function closeSB() {
+    sb.classList.remove('open');
+    ov.classList.remove('show');
+    document.body.style.overflow = '';
+    ham.setAttribute('aria-expanded','false');
+  }
+  function openSB() {
+    sb.classList.add('open');
+    ov.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    ham.setAttribute('aria-expanded','true');
+  }
+
+  ham.addEventListener('click', function() {
+    sb.classList.contains('open') ? closeSB() : openSB();
   });
-  ov.addEventListener('click',closeSB);
-  window.addEventListener('resize',function(){if(window.innerWidth>=992)closeSB();});
-  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeSB();});
-  sb.querySelectorAll('.sa:not([data-bs-toggle])').forEach(function(a){
-    a.addEventListener('click',function(){if(window.innerWidth<992)closeSB();});
+  ov.addEventListener('click', closeSB);
+  window.addEventListener('resize', function() {
+    if(window.innerWidth >= 992) closeSB();
+  });
+  document.addEventListener('keydown', function(e) {
+    if(e.key === 'Escape') closeSB();
+  });
+  sb.querySelectorAll('.sa:not([data-bs-toggle])').forEach(function(a) {
+    a.addEventListener('click', function() {
+      if(window.innerWidth < 992) closeSB();
+    });
   });
 
-  /* Default groups matching the 7 topic categories */
-  groups=[
-    {name:'Job Opportunities',   icon:'bi-briefcase',   desc:'',items:[]},
-    {name:'Marriage',            icon:'bi-hearts',      desc:'',items:[]},
-    {name:'Healing',             icon:'bi-activity',    desc:'',items:[]},
-    {name:'Education / Schools', icon:'bi-mortarboard', desc:'',items:[]},
-    {name:'Travel Opportunities',icon:'bi-airplane',    desc:'',items:[]},
-    {name:'Finances / Business', icon:'bi-cash-coin',   desc:'',items:[]},
-    {name:'Family Protection',   icon:'bi-people',      desc:'',items:[]},
+  /* Default groups */
+  groups = [
+    {name:'Job Opportunities',   icon:'bi-briefcase',   desc:'', items:[]},
+    {name:'Marriage',            icon:'bi-hearts',      desc:'', items:[]},
+    {name:'Healing',             icon:'bi-activity',    desc:'', items:[]},
+    {name:'Education / Schools', icon:'bi-mortarboard', desc:'', items:[]},
+    {name:'Travel Opportunities',icon:'bi-airplane',    desc:'', items:[]},
+    {name:'Finances / Business', icon:'bi-cash-coin',   desc:'', items:[]},
+    {name:'Family Protection',   icon:'bi-people',      desc:'', items:[]},
   ];
 
   renderPool();
@@ -988,404 +1578,350 @@ document.addEventListener('DOMContentLoaded',function(){
 });
 
 /* ── VIEW SWITCHER ──────────────────────────────── */
-function sv(v){
-  ['vSessions','vBuilder','vLive'].forEach(function(id){
-    document.getElementById(id).style.display='none';
+function sv(v) {
+  ['vSessions','vBuilder','vLive'].forEach(function(id) {
+    document.getElementById(id).style.display = 'none';
   });
-  var labels={sessions:'Sessions',builder:'Prayer List Builder',live:'Live Session'};
-  document.getElementById('bcActive').textContent=labels[v]||v;
-  document.getElementById('v'+v.charAt(0).toUpperCase()+v.slice(1)).style.display='block';
-  if(v==='live'&&leaderPP) document.getElementById('liveLdrPP').textContent=leaderPP;
-  /* sync mobile nav active state */
-  var vIdx={sessions:0,builder:1,live:2};
-  document.querySelectorAll('.mnav-btn').forEach(function(b,i){
-    b.classList.toggle('active', i===vIdx[v]);
-  });
-  window.scrollTo({top:0,behavior:'smooth'});
+  var labels = {sessions:'Sessions', builder:'Prayer List Builder', live:'Live Session'};
+  document.getElementById('bcActive').textContent = labels[v] || v;
+  var el = document.getElementById('v' + v.charAt(0).toUpperCase() + v.slice(1));
+  if(el) el.style.display = 'block';
+  if(v === 'live' && leaderPP) document.getElementById('liveLdrPP').textContent = leaderPP;
+  window.scrollTo({top:0, behavior:'smooth'});
 }
 
 /* ── RENDER POOL ────────────────────────────────── */
-function renderPool(){
-  var q=(document.getElementById('poolQ').value||'').toLowerCase();
-  var body=document.getElementById('poolBody');
-  var html='',shown=0;
-  POOL.forEach(function(r){
-    if(q&&![r.pp,r.topic,r.mPP,r.member].some(function(s){return s.toLowerCase().includes(q);}))return;
+function renderPool() {
+  var q = (document.getElementById('poolQ').value || '').toLowerCase();
+  var body = document.getElementById('poolBody');
+  var html = '', shown = 0;
+
+  POOL.forEach(function(r) {
+    if(q && ![r.pp,r.topic,r.mPP,r.member].some(function(s){return s.toLowerCase().includes(q);})) return;
     shown++;
-    var sel=prayerList.includes(r.pp);
-    var tc=TOPIC_COLORS[r.topic]||'background:#f1f5f9;color:#475569';
-    var det=r.details||'';
-    var detShort=det.length>52?det.substring(0,52)+'...':det;
-    html+='<tr class="pool-row'+(sel?' sel':'')+'" id="pr-'+r.pp+'">'
-      +'<td style="text-align:center;">'
-      +'<input type="checkbox" class="pchk" data-pp="'+r.pp+'"'+(sel?' checked':'')
-      +' onchange="onChk(this)"></td>'
-      +'<td><span style="font-family:monospace;font-size:.73rem;">'+r.pp+'</span></td>'
-      +'<td class="td-mpp">'
-      +'<span style="font-family:monospace;font-size:.73rem;font-weight:600;">'+r.mPP+'</span>'
-      +'<br><span style="font-size:.71rem;color:var(--muted);">'+r.member+'</span>'
-      +'</td>'
-      +'<td>'
-      +'<span class="badge mb-1" style="'+tc+';display:inline-block;">'+r.topic+'</span>'
-      +(detShort?'<br><span style="font-size:.71rem;color:var(--muted);" title="'+det.replace(/"/g,'&quot;')+'">'+detShort+'</span>':'')
-      +'<br><span class="d-none d-md-none" style="font-size:.68rem;color:#899bbd;font-family:monospace;">'+r.mPP+'</span>'
-      +'</td>'
-      +'<td class="td-date"><small>'+r.date+'</small></td>'
-      +'</tr>';
+    var sel = prayerList.includes(r.pp);
+    var tc  = TOPIC_COLORS[r.topic] || 'background:#f1f5f9;color:#475569';
+    var det = r.details || '';
+    var detShort = det.length > 55 ? det.substring(0,55) + '...' : det;
+
+    html += '<tr class="pool-row' + (sel ? ' sel' : '') + '" id="pr-' + r.pp + '">'
+      + '<td style="text-align:center;">'
+      + '<input type="checkbox" class="pchk" data-pp="' + r.pp + '"' + (sel ? ' checked' : '')
+      + ' onchange="onChk(this)" aria-label="Select ' + r.member + '"></td>'
+      + '<td><span style="font-family:monospace;font-size:.73rem;">' + r.pp + '</span></td>'
+      + '<td class="td-mpp">'
+      + '<span style="font-family:monospace;font-size:.73rem;font-weight:600;">' + r.mPP + '</span>'
+      + '<br><span style="font-size:.71rem;color:var(--muted);">' + r.member + '</span>'
+      + '</td>'
+      + '<td>'
+      + '<span class="badge mb-1" style="' + tc + ';display:inline-block;">' + r.topic + '</span>'
+      + (detShort ? '<br><span style="font-size:.71rem;color:var(--muted);">' + detShort + '</span>' : '')
+      + '</td>'
+      + '<td class="td-date"><small>' + r.date + '</small></td>'
+      + '</tr>';
   });
-  if(!shown)html='<tr><td colspan="5" class="text-center py-3" style="color:var(--muted);"><i class="bi bi-search me-1"></i>No results.</td></tr>';
-  body.innerHTML=html;
-  /* init tooltips */
-  body.querySelectorAll('[title]').forEach(function(el){
-    if(!el._bsTooltip)el._bsTooltip=new bootstrap.Tooltip(el,{trigger:'hover',placement:'top'});
-  });
+
+  if(!shown) html = '<tr><td colspan="5" class="text-center py-3" style="color:var(--muted);"><i class="bi bi-search me-1"></i>No results found.</td></tr>';
+  body.innerHTML = html;
   syncMaster();
 }
 
-/* ── CHECKBOX: AUTO-ADD / AUTO-REMOVE ───────────── */
-function onChk(chk){
-  var pp=chk.dataset.pp;
-  var row=document.getElementById('pr-'+pp);
-  if(chk.checked){
-    if(!prayerList.includes(pp))prayerList.push(pp);
-    if(row)row.classList.add('sel');
+/* ── CHECKBOX HANDLERS ───────────────────────────── */
+function onChk(chk) {
+  var pp  = chk.dataset.pp;
+  var row = document.getElementById('pr-' + pp);
+  if(chk.checked) {
+    if(!prayerList.includes(pp)) prayerList.push(pp);
+    if(row) row.classList.add('sel');
   } else {
-    prayerList=prayerList.filter(function(x){return x!==pp;});
-    groups.forEach(function(g){g.items=g.items.filter(function(x){return x!==pp;});});
-    if(row)row.classList.remove('sel');
+    prayerList = prayerList.filter(function(x){return x !== pp;});
+    groups.forEach(function(g){g.items = g.items.filter(function(x){return x !== pp;});});
+    if(row) row.classList.remove('sel');
   }
-  renderPL();renderGroupSel();renderGS();refreshCounts();syncMaster();
+  renderPL(); renderGroupSel(); renderGS(); refreshCounts(); syncMaster();
 }
 
-function masterTick(m){
-  POOL.forEach(function(r){
-    var c=document.querySelector('.pchk[data-pp="'+r.pp+'"]');
-    if(c){c.checked=m.checked;onChk(c);}
+function masterTick(m) {
+  POOL.forEach(function(r) {
+    var c = document.querySelector('.pchk[data-pp="' + r.pp + '"]');
+    if(c) { c.checked = m.checked; onChk(c); }
   });
 }
 
-function selectAll(){
-  POOL.forEach(function(r){
-    if(!prayerList.includes(r.pp)){
+function selectAll() {
+  POOL.forEach(function(r) {
+    if(!prayerList.includes(r.pp)) {
       prayerList.push(r.pp);
-      var row=document.getElementById('pr-'+r.pp);if(row)row.classList.add('sel');
-      var c=document.querySelector('.pchk[data-pp="'+r.pp+'"]');if(c)c.checked=true;
+      var row = document.getElementById('pr-' + r.pp); if(row) row.classList.add('sel');
+      var c = document.querySelector('.pchk[data-pp="' + r.pp + '"]'); if(c) c.checked = true;
     }
   });
-  renderPL();renderGroupSel();refreshCounts();syncMaster();
+  renderPL(); renderGroupSel(); refreshCounts(); syncMaster();
 }
 
-function clearAll(){
-  if(prayerList.length&&!confirm('Remove all '+prayerList.length+' requests from the prayer list?'))return;
-  prayerList=[];groups.forEach(function(g){g.items=[];});
-  renderPool();renderPL();renderGroupSel();renderGS();refreshCounts();
+function clearAll() {
+  if(prayerList.length && !confirm('Remove all ' + prayerList.length + ' requests from the prayer list?')) return;
+  prayerList = [];
+  groups.forEach(function(g){g.items = [];});
+  renderPool(); renderPL(); renderGroupSel(); renderGS(); refreshCounts();
 }
 
-function syncMaster(){
-  var all=document.querySelectorAll('.pchk');
-  var chked=document.querySelectorAll('.pchk:checked');
-  var m=document.getElementById('chkAll');
-  if(!m||!all.length)return;
-  m.indeterminate=chked.length>0&&chked.length<all.length;
-  m.checked=all.length>0&&chked.length===all.length;
+function syncMaster() {
+  var all   = document.querySelectorAll('.pchk');
+  var chked = document.querySelectorAll('.pchk:checked');
+  var m     = document.getElementById('chkAll');
+  if(!m || !all.length) return;
+  m.indeterminate = chked.length > 0 && chked.length < all.length;
+  m.checked       = all.length > 0 && chked.length === all.length;
 }
 
 /* ── RENDER PRAYER LIST ─────────────────────────── */
-function renderPL(){
-  var wrap=document.getElementById('plWrap');
-  var badge=document.getElementById('plBadge');
-  var clrBtn=document.getElementById('btnClrList');
-  badge.textContent=prayerList.length;
+function renderPL() {
+  var wrap   = document.getElementById('plWrap');
+  var badge  = document.getElementById('plBadge');
+  var clrBtn = document.getElementById('btnClrList');
+  badge.textContent = prayerList.length;
 
-  if(!prayerList.length){
-    var e=document.getElementById('plEmpty');
-    if(!e){
-      e=document.createElement('div');e.id='plEmpty';e.className='pl-empty';
-      e.innerHTML='<i class="bi bi-journal-plus"></i><p>No requests yet.<br>Tick rows in the pool above to build the list.</p>';
-    }
-    wrap.innerHTML='';wrap.appendChild(e);
-    clrBtn.style.display='none';return;
+  if(!prayerList.length) {
+    wrap.innerHTML = '';
+    var e = document.createElement('div');
+    e.id = 'plEmpty'; e.className = 'pl-empty';
+    e.innerHTML = '<i class="bi bi-journal-plus" aria-hidden="true"></i><p>No requests yet.<br>Tick rows in the pool above to build the list.</p>';
+    wrap.appendChild(e);
+    clrBtn.style.display = 'none';
+    return;
   }
-  clrBtn.style.display='';
-  var html='';
-  prayerList.forEach(function(pp,i){
-    var r=POOL.find(function(x){return x.pp===pp;});if(!r)return;
-    var gn='';groups.forEach(function(g){if(g.items.includes(pp))gn=g.name;});
-    html+='<div class="pl-item" id="pli-'+pp+'">'
-      +'<div class="pl-num">'+(i+1)+'</div>'
-      +'<div class="pl-body">'
-      +'<div class="pl-topic">'+r.topic+'</div>'
-      +'<div class="pl-meta">'+r.mPP+' &middot; '+r.member
-      +(gn?' <span class="badge" style="background:#e8f0fe;color:#4154f1;font-size:.63rem;">'+gn+'</span>':'')
-      +'<br><span style="font-family:monospace;font-size:.68rem;">'+pp+'</span>'
-      +'</div>'
-      +'</div>'
-      +'<button class="pl-remove" onclick="removePL(\''+pp+'\')" title="Remove"><i class="bi bi-x-lg"></i></button>'
-      +'</div>';
+  clrBtn.style.display = '';
+  var html = '';
+  prayerList.forEach(function(pp, i) {
+    var r = POOL.find(function(x){return x.pp === pp;}); if(!r) return;
+    var gn = '';
+    groups.forEach(function(g){if(g.items.includes(pp)) gn = g.name;});
+    html += '<div class="pl-item" id="pli-' + pp + '" role="listitem">'
+      + '<div class="pl-num" aria-hidden="true">' + (i+1) + '</div>'
+      + '<div class="pl-body">'
+      + '<div class="pl-topic">' + r.topic + '</div>'
+      + '<div class="pl-meta">' + r.mPP + ' &middot; ' + r.member
+      + (gn ? ' <span class="badge" style="background:#e8f0fe;color:var(--p);font-size:.63rem;">' + gn + '</span>' : '')
+      + '<br><span style="font-family:monospace;font-size:.68rem;">' + pp + '</span>'
+      + '</div>'
+      + '</div>'
+      + '<button class="pl-remove" onclick="removePL(\'' + pp + '\')" title="Remove from list" aria-label="Remove ' + r.member + ' from list"><i class="bi bi-x-lg" aria-hidden="true"></i></button>'
+      + '</div>';
   });
-  wrap.innerHTML=html;
+  wrap.innerHTML = html;
 }
 
-function removePL(pp){
-  var c=document.querySelector('.pchk[data-pp="'+pp+'"]');
-  if(c){c.checked=false;onChk(c);return;}
-  prayerList=prayerList.filter(function(x){return x!==pp;});
-  groups.forEach(function(g){g.items=g.items.filter(function(x){return x!==pp;});});
-  renderPL();renderGS();refreshCounts();
+function removePL(pp) {
+  var c = document.querySelector('.pchk[data-pp="' + pp + '"]');
+  if(c) { c.checked = false; onChk(c); return; }
+  prayerList = prayerList.filter(function(x){return x !== pp;});
+  groups.forEach(function(g){g.items = g.items.filter(function(x){return x !== pp;});});
+  renderPL(); renderGS(); refreshCounts();
 }
 
-/* ── COUNTERS ────────────────────────────────────── */
-function refreshCounts(){
-  var t=POOL.length,s=prayerList.length,p=t>0?Math.round(s/t*100):0;
-  document.getElementById('cbSel').textContent=s;
-  document.getElementById('cbAvail').textContent=t;
-  document.getElementById('cbGrps').textContent=groups.length;
-  document.getElementById('cbBar').style.width=p+'%';
-  document.getElementById('cbLbl').textContent=s>0
-    ?s+' request'+(s>1?'s':'')+' currently in the prayer list'
-    :'Tick rows in the pool to build the prayer list';
-  document.getElementById('cbCov').textContent=s+' of '+t+' approved requests added to prayer list';
-  document.getElementById('sideCount').textContent=s;
-  document.getElementById('sideGrps').textContent=groups.length;
-  document.getElementById('btnStart').disabled=s===0;
+/* ── COUNTS ─────────────────────────────────────── */
+function refreshCounts() {
+  var t = POOL.length, s = prayerList.length;
+  var p = t > 0 ? Math.round(s/t*100) : 0;
+  document.getElementById('cbSel').textContent   = s;
+  document.getElementById('cbAvail').textContent = t;
+  document.getElementById('cbGrps').textContent  = groups.length;
+  var bar = document.getElementById('cbBar');
+  bar.style.width = p + '%';
+  bar.setAttribute('aria-valuenow', p);
+  document.getElementById('cbLbl').textContent = s > 0
+    ? s + ' request' + (s > 1 ? 's' : '') + ' currently in the prayer list'
+    : 'Tick rows in the pool to build the prayer list';
+  document.getElementById('cbCov').textContent = s + ' of ' + t + ' approved requests added to prayer list';
+  document.getElementById('sideCount').textContent = s;
+  document.getElementById('sideGrps').textContent  = groups.length;
+  var btn = document.getElementById('btnStart');
+  btn.disabled = s === 0;
+  btn.setAttribute('aria-disabled', s === 0 ? 'true' : 'false');
 }
 
 /* ── GROUP SELECT ───────────────────────────────── */
-function renderGroupSel(){
-  var sel=document.getElementById('gSel'),prev=sel.value;
-  sel.innerHTML='<option value="">-- choose group --</option>';
-  groups.forEach(function(g,i){
-    var o=document.createElement('option');
-    o.value=i;
-    o.textContent=g.name+(g.items.length?' ('+g.items.length+')':'');
+function renderGroupSel() {
+  var sel = document.getElementById('gSel'), prev = sel.value;
+  sel.innerHTML = '<option value="">-- choose group --</option>';
+  groups.forEach(function(g, i) {
+    var o = document.createElement('option');
+    o.value = i;
+    o.textContent = g.name + (g.items.length ? ' (' + g.items.length + ')' : '');
     sel.appendChild(o);
   });
-  sel.value=prev;
+  sel.value = prev;
 }
 
-function assignGroup(){
-  var idx=document.getElementById('gSel').value;
-  if(idx===''){toast('Please choose a group first.');return;}
-  var added=prayerList.filter(function(pp){return !groups[idx].items.includes(pp);});
-  if(!added.length){toast('All selected are already in this group.');return;}
-  groups[idx].items=groups[idx].items.concat(added);
-  renderGroupSel();renderGS();renderPL();
-  toast(added.length+' request(s) added to "'+groups[idx].name+'"');
+function assignGroup() {
+  var idx = document.getElementById('gSel').value;
+  if(idx === '') { toast('Please choose a group first.'); return; }
+  var added = prayerList.filter(function(pp){return !groups[idx].items.includes(pp);});
+  if(!added.length) { toast('All selected are already in this group.'); return; }
+  groups[idx].items = groups[idx].items.concat(added);
+  renderGroupSel(); renderGS(); renderPL();
+  toast(added.length + ' request(s) added to "' + groups[idx].name + '"');
 }
 
-function openNGM(){$ngM.show();}
+function openNGM() { $ngM.show(); }
 
-function createGroup(){
-  var n=document.getElementById('ngName').value.trim();
-  if(!n){toast('Group name is required.');return;}
-  groups.push({name:n,icon:document.getElementById('ngIcon').value,desc:document.getElementById('ngDesc').value.trim(),items:[]});
-  document.getElementById('ngName').value='';
-  document.getElementById('ngDesc').value='';
+function createGroup() {
+  var n = document.getElementById('ngName').value.trim();
+  if(!n) { toast('Group name is required.'); return; }
+  groups.push({
+    name: n,
+    icon: document.getElementById('ngIcon').value,
+    desc: document.getElementById('ngDesc').value.trim(),
+    items: []
+  });
+  document.getElementById('ngName').value = '';
+  document.getElementById('ngDesc').value = '';
   $ngM.hide();
-  renderGroupSel();renderGS();refreshCounts();
-  toast('Group "'+n+'" created!');
+  renderGroupSel(); renderGS(); refreshCounts();
+  toast('Group "' + n + '" created!');
 }
 
 /* ── GROUP SUMMARY ───────────────────────────────── */
-function renderGS(){
-  var card=document.getElementById('grpSummCard');
-  var body=document.getElementById('grpSummBody');
-  var has=groups.some(function(g){return g.items.length>0;});
-  if(!has){card.style.display='none';return;}
-  card.style.display='block';
-  var html='';
-  groups.forEach(function(g,i){
-    if(!g.items.length)return;
-    html+='<div class="gcard mb-2">'
-      +'<div class="gch" onclick="tgGS('+i+')">'
-      +'<div class="gicon" style="background:var(--p-lt);color:var(--p);"><i class="bi '+g.icon+'"></i></div>'
-      +'<div class="flex-fill"><p class="gtitle">'+g.name+'</p><p class="gmeta">'+g.items.length+' request(s)</p></div>'
-      +'<i class="bi bi-chevron-down" id="gsc-'+i+'" style="transition:transform .2s;color:var(--muted);"></i>'
-      +'</div>'
-      +'<div class="collapse show" id="gsb-'+i+'">';
-    g.items.forEach(function(pp){
-      var r=POOL.find(function(x){return x.pp===pp;});if(!r)return;
-      html+='<div style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid #f0f3ff;font-size:.79rem;flex-wrap:wrap;">'
-        +'<span style="font-family:monospace;font-size:.71rem;color:var(--muted);">'+pp+'</span>'
-        +'<span style="font-weight:600;flex:1;min-width:100px;">'+r.topic+'</span>'
-        +'<span style="font-size:.72rem;color:var(--muted);">'+r.mPP+'</span>'
-        +'</div>';
+function renderGS() {
+  var card = document.getElementById('grpSummCard');
+  var body = document.getElementById('grpSummBody');
+  var has  = groups.some(function(g){return g.items.length > 0;});
+  if(!has) { card.style.display = 'none'; return; }
+  card.style.display = 'block';
+  var html = '';
+  groups.forEach(function(g, i) {
+    if(!g.items.length) return;
+    html += '<div class="gcard mb-2">'
+      + '<div class="gch" onclick="tgGS(' + i + ')" role="button" tabindex="0" aria-expanded="true" aria-controls="gsb-' + i + '">'
+      + '<div class="gicon" style="background:var(--p-lt);color:var(--p);"><i class="bi ' + g.icon + '" aria-hidden="true"></i></div>'
+      + '<div class="flex-fill"><p class="gtitle">' + g.name + '</p><p class="gmeta">' + g.items.length + ' request(s)</p></div>'
+      + '<i class="bi bi-chevron-down" id="gsc-' + i + '" style="transition:transform .2s;color:var(--muted);" aria-hidden="true"></i>'
+      + '</div>'
+      + '<div class="collapse show" id="gsb-' + i + '">';
+    g.items.forEach(function(pp) {
+      var r = POOL.find(function(x){return x.pp === pp;}); if(!r) return;
+      html += '<div style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--border2);font-size:.79rem;flex-wrap:wrap;">'
+        + '<span style="font-family:monospace;font-size:.71rem;color:var(--muted);">' + pp + '</span>'
+        + '<span style="font-weight:600;flex:1;min-width:90px;">' + r.topic + '</span>'
+        + '<span style="font-size:.72rem;color:var(--muted);">' + r.mPP + '</span>'
+        + '</div>';
     });
-    html+='</div></div>';
+    html += '</div></div>';
   });
-  body.innerHTML=html;
+  body.innerHTML = html;
 }
 
-function tgGS(i){
-  var b=document.getElementById('gsb-'+i);
-  var c=document.getElementById('gsc-'+i);
+function tgGS(i) {
+  var b = document.getElementById('gsb-' + i);
+  var c = document.getElementById('gsc-' + i);
+  var trigger = document.querySelector('[aria-controls="gsb-' + i + '"]');
   b.classList.toggle('show');
-  c.style.transform=b.classList.contains('show')?'':'rotate(-90deg)';
+  var expanded = b.classList.contains('show');
+  c.style.transform = expanded ? '' : 'rotate(-90deg)';
+  if(trigger) trigger.setAttribute('aria-expanded', expanded ? 'true' : 'false');
 }
 
 /* ── LEADER LOOKUP ───────────────────────────────── */
-function lookupLeader(){
-  var pp=(document.getElementById('leaderInput').value||'').trim().toUpperCase();
-  if(!pp){toast('Enter a PPCode first.');return;}
-  var m=MEMBERS[pp]||null;
-  var body=document.getElementById('ldrBody');
-  var cfm=document.getElementById('btnConfLdr');
-  if(!m){
-    body.innerHTML='<div class="text-center py-3">'
-      +'<i class="bi bi-person-x" style="font-size:2rem;color:var(--danger);"></i>'
-      +'<p class="mt-2 mb-0" style="color:var(--danger);font-weight:700;">PPCode not found</p>'
-      +'<p class="mt-1" style="font-size:.82rem;color:var(--muted);">No member matched <code>'+pp+'</code></p>'
-      +'</div>';
-    cfm.disabled=true;
+function lookupLeader() {
+  var pp = (document.getElementById('leaderInput').value || '').trim().toUpperCase();
+  if(!pp) { toast('Enter a PPCode first.'); return; }
+  var m    = MEMBERS[pp] || null;
+  var body = document.getElementById('ldrBody');
+  var cfm  = document.getElementById('btnConfLdr');
+
+  if(!m) {
+    body.innerHTML = '<div class="text-center py-3">'
+      + '<i class="bi bi-person-x" style="font-size:2rem;color:var(--danger);" aria-hidden="true"></i>'
+      + '<p class="mt-2 mb-0" style="color:var(--danger);font-weight:700;">PPCode not found</p>'
+      + '<p class="mt-1" style="font-size:.82rem;color:var(--muted);">No member matched <code>' + pp + '</code></p>'
+      + '</div>';
+    cfm.disabled = true;
+    cfm.setAttribute('aria-disabled','true');
   } else {
-    body.innerHTML='<div class="leader-card mb-2">'
-      +'<div class="lav">'+m.ini+'</div>'
-      +'<div><div class="lname">'+m.name+'</div><div class="lsub">'+m.role+' &middot; '+pp+'</div></div>'
-      +'</div>'
-      +'<p class="mb-0" style="font-size:.8rem;color:var(--muted);">Confirm as Prayer Leader?</p>';
-    cfm.disabled=false;
-    cfm.onclick=function(){
-      leaderPP=pp;leaderData=m;
-      document.getElementById('lAv').textContent=m.ini;
-      document.getElementById('lName').textContent=m.name;
-      document.getElementById('lSub').textContent=m.role+' \u00b7 '+pp;
-      document.getElementById('leaderCard').style.display='flex';
+    body.innerHTML = '<div class="leader-card mb-2">'
+      + '<div class="lav">' + m.ini + '</div>'
+      + '<div><div class="lname">' + m.name + '</div><div class="lsub">' + m.role + ' &middot; ' + pp + '</div></div>'
+      + '</div>'
+      + '<p class="mb-0" style="font-size:.8rem;color:var(--muted);">Confirm as Prayer Leader?</p>';
+    cfm.disabled = false;
+    cfm.setAttribute('aria-disabled','false');
+    cfm.onclick = function() {
+      leaderPP   = pp;
+      leaderData = m;
+      document.getElementById('lAv').textContent   = m.ini;
+      document.getElementById('lName').textContent = m.name;
+      document.getElementById('lSub').textContent  = m.role + ' \u00b7 ' + pp;
+      document.getElementById('leaderCard').style.display = 'flex';
       $lM.hide();
-      toast('Leader set: '+m.name+' ('+pp+')');
+      toast('Leader set: ' + m.name + ' (' + pp + ')');
     };
   }
   $lM.show();
 }
 
-function clearLeader(){
-  leaderPP='';leaderData=null;
-  document.getElementById('leaderInput').value='';
-  document.getElementById('leaderCard').style.display='none';
+function clearLeader() {
+  leaderPP = ''; leaderData = null;
+  document.getElementById('leaderInput').value = '';
+  document.getElementById('leaderCard').style.display = 'none';
 }
 
 /* ── LIVE: MARK GROUP AS PRAYED ─────────────────── */
-function markPrayed(cardId,count){
-  if(!confirm('Mark all '+count+' requests in this group as Prayed?'))return;
-  var card=document.getElementById(cardId);
-  var badge=card.querySelector('.badge');
-  var bar=card.querySelector('.progress-bar');
-  var meta=card.querySelector('.gmeta');
-  var note=card.querySelector('.gbody p');
-  var pctTxt=card.querySelector('.pct-txt');
-  var btn=card.querySelector('button:not([disabled])');
+function markPrayed(cardId, count) {
+  if(!confirm('Mark all ' + count + ' requests in this group as Prayed?')) return;
+  var card   = document.getElementById(cardId);
+  var badge  = card.querySelector('.badge');
+  var bar    = card.querySelector('.progress-bar');
+  var meta   = card.querySelector('.gmeta');
+  var note   = card.querySelector('.gbody p');
+  var pctTxt = card.querySelector('.pct-txt');
+  var btn    = card.querySelector('button:not([disabled])');
+  var gch    = card.querySelector('.gch');
 
   card.classList.add('done');
-  card.querySelector('.gch').style.background='var(--success-lt)';
-  card.querySelector('.gch').style.borderColor='#b7e4c7';
-  card.querySelector('.gtitle').style.color='var(--success)';
-  if(meta){meta.textContent=count+' requests \u00b7 Prayed \u2713';meta.style.color='var(--success)';}
-  badge.className='badge bg-success d-block mb-1';badge.textContent='Prayed';
-  bar.style.width='100%';bar.className='progress-bar bg-success';
-  if(pctTxt)pctTxt.textContent=count+' / '+count;
-  if(note){note.innerHTML='<i class="bi bi-check-circle me-1"></i>Prayers completed for this group.';note.style.color='var(--success)';}
-  if(btn){btn.disabled=true;btn.innerHTML='<i class="bi bi-check2-all me-1"></i>Done';btn.className='btn btn-outline-success btn-sm w-100';}
+  if(gch) { gch.style.background = 'var(--success-lt)'; gch.style.borderColor = 'var(--success-bd)'; }
+  card.querySelector('.gtitle').style.color = 'var(--success)';
+  if(meta)   { meta.textContent = count + ' requests \u00b7 Prayed \u2713'; meta.style.color = 'var(--success)'; }
+  if(badge)  { badge.className = 'badge bg-success d-block mb-1'; badge.textContent = 'Prayed'; }
+  if(bar)    { bar.style.width = '100%'; bar.className = 'progress-bar bg-success'; }
+  if(pctTxt) { pctTxt.textContent = count + ' / ' + count; }
+  if(note)   { note.innerHTML = '<i class="bi bi-check-circle me-1" aria-hidden="true"></i>Prayers completed for this group.'; note.style.color = 'var(--success)'; }
+  if(btn)    { btn.disabled = true; btn.innerHTML = '<i class="bi bi-check2-all me-1" aria-hidden="true"></i>Done'; btn.className = 'btn btn-outline-success btn-sm w-100'; }
 
-  prayedLive+=count;
-  var pct=Math.min(100,Math.round(prayedLive/totalLive*100));
-  document.getElementById('ovPct').textContent=pct+'%';
-  document.getElementById('ovBar').style.width=pct+'%';
-  document.getElementById('ovLbl').textContent=prayedLive+' of '+totalLive+' prayed';
+  prayedLive += count;
+  var pct = Math.min(100, Math.round(prayedLive / totalLive * 100));
+  document.getElementById('ovPct').textContent = pct + '%';
+  var ovBar = document.getElementById('ovBar');
+  ovBar.style.width = pct + '%';
+  ovBar.setAttribute('aria-valuenow', pct);
+  document.getElementById('ovLbl').textContent = prayedLive + ' of ' + totalLive + ' prayed';
 
-  if(!document.querySelectorAll('#liveGrps .gcard:not(.done)').length)
-    document.getElementById('closeSessDiv').style.display='block';
+  if(!document.querySelectorAll('#liveGrps .gcard:not(.done)').length) {
+    document.getElementById('closeSessDiv').style.display = 'block';
+  }
 }
 
 /* ── TOAST ──────────────────────────────────────── */
 var _tt;
-function toast(msg){
-  var el=document.getElementById('toastEl');
-  el.textContent=msg;el.classList.add('show');
+function toast(msg) {
+  var el = document.getElementById('toastEl');
+  el.textContent = msg;
+  el.classList.add('show');
   clearTimeout(_tt);
-  _tt=setTimeout(function(){el.classList.remove('show');},2800);
-}
-</script>
-<!-- ── MOBILE BOTTOM NAV ─────────────────────── -->
-<nav id="mobileNav">
-  <button class="mnav-btn active" onclick="sv('sessions');setMNav(this)">
-    <i class="bi bi-calendar3"></i><span>Sessions</span>
-  </button>
-  <button class="mnav-btn active" onclick="sv('builder');setMNav(this)">
-    <i class="bi bi-list-check"></i><span>Builder</span>
-  </button>
-  <button class="mnav-btn" onclick="sv('live');setMNav(this)">
-    <i class="bi bi-play-circle"></i><span>Live</span>
-  </button>
-</nav>
-
-<!-- ── SCROLL-TO-TOP ─────────────────────────── -->
-<button id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">
-  <i class="bi bi-chevron-up"></i>
-</button>
-
-<style>
-/* Mobile bottom nav */
-#mobileNav{
-  display:none;
-  position:fixed;bottom:0;left:0;right:0;
-  height:58px;
-  background:var(--surf);
-  border-top:1px solid var(--border);
-  box-shadow:0 -4px 16px rgba(1,41,112,.09);
-  z-index:1035;
-  justify-content:space-around;
-  align-items:center;
-  padding:0 4px;
-  padding-bottom:env(safe-area-inset-bottom);
-}
-.mnav-btn{
-  flex:1;display:flex;flex-direction:column;align-items:center;
-  gap:2px;background:none;border:none;cursor:pointer;
-  color:var(--muted);font-size:.62rem;font-weight:600;
-  padding:6px 4px;border-radius:8px;transition:color .15s,background .15s;
-  font-family:'Open Sans',sans-serif;
-}
-.mnav-btn i{font-size:1.15rem;display:block;}
-.mnav-btn.active{color:var(--p);}
-.mnav-btn:hover{background:var(--p-lt);color:var(--p);}
-@media(max-width:991.98px){
-  #mobileNav{display:flex;}
-  #main{padding-bottom:72px;}
-}
-@media(max-width:399.98px){
-  #mobileNav{height:54px;}
-  .mnav-btn{font-size:.58rem;}
-  .mnav-btn i{font-size:1.05rem;}
+  _tt = setTimeout(function(){ el.classList.remove('show'); }, 2800);
 }
 
-/* Scroll to top */
-#scrollTop{
-  position:fixed;bottom:72px;right:16px;
-  width:38px;height:38px;border-radius:50%;
-  background:var(--p);color:#fff;border:none;
-  display:none;align-items:center;justify-content:center;
-  font-size:1rem;cursor:pointer;z-index:1034;
-  box-shadow:0 3px 12px rgba(65,84,241,.35);
-  transition:opacity .2s,transform .2s;
-}
-#scrollTop:hover{background:var(--p-dk);transform:translateY(-2px);}
-#scrollTop.visible{display:flex;}
-@media(min-width:992px){
-  #scrollTop{bottom:22px;}
-}
-</style>
-
-<script>
-/* Mobile bottom nav active state */
-function setMNav(btn){
-  document.querySelectorAll('.mnav-btn').forEach(function(b){b.classList.remove('active');});
+/* ── MOBILE NAV ACTIVE STATE ─────────────────────── */
+function setMNav(btn) {
+  document.querySelectorAll('.mnav-btn').forEach(function(b){ b.classList.remove('active'); });
   btn.classList.add('active');
 }
-/* Scroll to top visibility */
-window.addEventListener('scroll',function(){
-  var btn=document.getElementById('scrollTop');
-  if(window.scrollY>200)btn.classList.add('visible');
-  else btn.classList.remove('visible');
-},{passive:true});
+
+/* ── SCROLL TO TOP ──────────────────────────────── */
+window.addEventListener('scroll', function() {
+  var btn = document.getElementById('scrollTop');
+  btn.classList.toggle('visible', window.scrollY > 220);
+}, { passive: true });
 </script>
 </body>
 </html>
